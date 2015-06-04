@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/ListItemContainer"
+    android:orientation="horizontal"
+    tools:ignore="UseCompoundDrawables">
+
+    <ImageView
+        android:id="@+id/iv_artist_image"
+        style="@style/ListItemView.Image"
+        android:src="@android:drawable/ic_media_play"/>
+
+    <TextView
+        android:id="@+id/tv_artist_name"
+        style="@style/ListItemView.Text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:singleLine="true"
+        tools:text="Artist name"/>
+
+</LinearLayout>

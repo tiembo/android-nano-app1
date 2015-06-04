@@ -5,4 +5,33 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="ListItemContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginTop">@dimen/activity_vertical_margin</item>
+        <item name="android:layout_marginBottom">@dimen/activity_vertical_margin</item>
+        <item name="android:paddingLeft">@dimen/list_item_horizontal_padding</item>
+        <item name="android:paddingRight">@dimen/list_item_horizontal_padding</item>
+        <item name="android:paddingTop">@dimen/list_item_vertical_padding</item>
+        <item name="android:paddingBottom">@dimen/list_item_vertical_padding</item>
+    </style>
+
+    <style name="ListItemView">
+        <item name="android:layout_marginLeft">@dimen/list_item_view_margin</item>
+        <item name="android:layout_marginRight">@dimen/list_item_view_margin</item>
+        <item name="android:layout_marginTop">@dimen/list_item_view_margin</item>
+        <item name="android:layout_marginBottom">@dimen/list_item_view_margin</item>
+    </style>
+
+    <style name="ListItemView.Image">
+        <item name="android:layout_width">@dimen/list_item_logo_square_size</item>
+        <item name="android:layout_height">@dimen/list_item_logo_square_size</item>
+    </style>
+
+    <style name="ListItemView.Text">
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
 </resources>
