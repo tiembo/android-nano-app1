@@ -4,37 +4,23 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artist;
 
-public class SearchResultsAdapter extends BaseAdapter {
+public class SearchResultsAdapter extends ArrayAdapter<Artist> {
     private LayoutInflater mInflater;
-    private Artist[] mSearchResults;
 
     private class ViewHolder {
         public TextView artistName;
     }
 
-    public SearchResultsAdapter(Context context, Artist[] searchResults) {
+    public SearchResultsAdapter(Context context, List<Artist> results) {
+        super(context, R.layout.list_item_search_result, results);
         mInflater = LayoutInflater.from(context);
-        mSearchResults = searchResults;
-    }
-
-    @Override
-    public int getCount() {
-        return mSearchResults.length;
-    }
-
-    @Override
-    public Object getItem(int i) {
-        return mSearchResults[i];
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return i;
     }
 
     @Override
@@ -50,7 +36,7 @@ public class SearchResultsAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
 
-        Artist artist = (Artist) getItem(i);
+        Artist artist = getItem(i);
         holder.artistName.setText(artist.name);
 
         return view;

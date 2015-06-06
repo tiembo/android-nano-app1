@@ -7,13 +7,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
+import kaaes.spotify.webapi.android.models.ArtistsPager;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment
+        implements Callback<ArtistsPager> {
+
+    private SearchResultsAdapter mAdapter;
+    private SpotifyService mService;
 
     public MainActivityFragment() {
     }
@@ -23,23 +35,41 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        SearchResultsAdapter adapter = new SearchResultsAdapter(getActivity(), getArtists());
+        // initialize Adapter and set to ListView
+        mAdapter = new SearchResultsAdapter(getActivity(), new ArrayList<Artist>());
         ListView listView = (ListView) view.findViewById(R.id.lv_search_results);
-        listView.setAdapter(adapter);
+        listView.setAdapter(mAdapter);
+
+        // initialize Spotify API service
+        SpotifyApi api = new SpotifyApi();
+        mService = api.getService();
+
+        // placeholder - automatically search for now
+        searchForArtist("coldplay");
 
         return view;
     }
 
-    // temporary method to generate list of Artists
-    private Artist[] getArtists() {
-        int size = 20;
-        Artist[] results = new Artist[20];
-        for (int i = 0; i < size; i++) {
-            Artist artist = new Artist();
-            artist.name = "Artist " + (i + 1);
-            results[i] = artist;
-        }
+    private void searchForArtist(String artist) {
+        mService.searchArtists(artist, this);
+    }
 
-        return results;
+    @Override
+    public void success(final ArtistsPager artistsPager, Response response) {
+
+        // update adapter with data from server
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.clear();
+                mAdapter.addAll(artistsPager.artists.items);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void failure(RetrofitError error) {
+
     }
 }
