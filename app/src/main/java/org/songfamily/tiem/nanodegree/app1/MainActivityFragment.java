@@ -1,10 +1,12 @@
 package org.songfamily.tiem.nanodegree.app1;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ import retrofit.client.Response;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment
-        implements Callback<ArtistsPager> {
+        implements Callback<ArtistsPager>, AdapterView.OnItemClickListener {
 
     private SearchResultsAdapter mAdapter;
     private SpotifyService mService;
@@ -39,6 +41,7 @@ public class MainActivityFragment extends Fragment
         mAdapter = new SearchResultsAdapter(getActivity(), new ArrayList<Artist>());
         ListView listView = (ListView) view.findViewById(R.id.lv_search_results);
         listView.setAdapter(mAdapter);
+        listView.setOnItemClickListener(this);
 
         // initialize Spotify API service
         SpotifyApi api = new SpotifyApi();
@@ -71,5 +74,11 @@ public class MainActivityFragment extends Fragment
     @Override
     public void failure(RetrofitError error) {
 
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Intent intent = new Intent(getActivity(), ArtistTracksActivity.class);
+        startActivity(intent);
     }
 }
