@@ -8,8 +8,7 @@
 
     <ImageView
         android:id="@+id/iv_artist_image"
-        style="@style/ListItemView.Image"
-        android:src="@android:drawable/ic_media_play"/>
+        style="@style/ListItemView.Image"/>
 
     <TextView
         android:id="@+id/tv_artist_name"

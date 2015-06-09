@@ -5,22 +5,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artist;
 
 public class SearchResultsAdapter extends ArrayAdapter<Artist> {
-    private LayoutInflater mInflater;
+    private Context mContext;
 
     private class ViewHolder {
         public TextView artistName;
+        public ImageView artistImage;
     }
 
     public SearchResultsAdapter(Context context, List<Artist> results) {
         super(context, R.layout.list_item_search_result, results);
-        mInflater = LayoutInflater.from(context);
+        mContext = context;
     }
 
     @Override
@@ -28,9 +32,11 @@ public class SearchResultsAdapter extends ArrayAdapter<Artist> {
         ViewHolder holder;
 
         if (view == null) {
-            view = mInflater.inflate(R.layout.list_item_search_result, viewGroup, false);
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            view = inflater.inflate(R.layout.list_item_search_result, viewGroup, false);
             holder = new ViewHolder();
             holder.artistName = (TextView) view.findViewById(R.id.tv_artist_name);
+            holder.artistImage = (ImageView) view.findViewById(R.id.iv_artist_image);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -39,6 +45,29 @@ public class SearchResultsAdapter extends ArrayAdapter<Artist> {
         Artist artist = getItem(i);
         holder.artistName.setText(artist.name);
 
+        String artistImageUrl = getArtistImage(artist);
+        if (artistImageUrl != null) {
+            Picasso.with(mContext)
+                    .load(artistImageUrl)
+
+                    // TODO: change this
+                    .error(R.drawable.abc_btn_radio_material)
+                    .into(holder.artistImage);
+        } else {
+
+            // TODO: change this to match default ImageView drawable
+            holder.artistImage.setImageResource(R.drawable.abc_ab_share_pack_mtrl_alpha);
+        }
+
         return view;
+    }
+
+    private String getArtistImage(Artist artist) {
+        int imageCount = artist.images.size();
+
+        if (imageCount == 0)
+            return null;
+        else
+            return artist.images.get(0).url;
     }
 }
