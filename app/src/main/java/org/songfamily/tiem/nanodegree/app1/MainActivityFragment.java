@@ -2,7 +2,6 @@ package org.songfamily.tiem.nanodegree.app1;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +10,6 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.ArtistsPager;
 import retrofit.Callback;
@@ -20,16 +17,13 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-/**
- * A placeholder fragment containing a simple view.
- */
-public class MainActivityFragment extends Fragment
+public class MainActivityFragment extends BaseFragment
         implements Callback<ArtistsPager>, AdapterView.OnItemClickListener {
 
     private SearchResultsAdapter mAdapter;
-    private SpotifyService mService;
 
     public MainActivityFragment() {
+        super();
     }
 
     @Override
@@ -42,10 +36,6 @@ public class MainActivityFragment extends Fragment
         ListView listView = (ListView) view.findViewById(R.id.lv_search_results);
         listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(this);
-
-        // initialize Spotify API service
-        SpotifyApi api = new SpotifyApi();
-        mService = api.getService();
 
         // placeholder - automatically search for now
         searchForArtist("coldplay");
