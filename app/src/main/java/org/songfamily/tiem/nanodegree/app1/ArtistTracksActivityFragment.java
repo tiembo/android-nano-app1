@@ -20,6 +20,8 @@ import retrofit.client.Response;
 public class ArtistTracksActivityFragment extends BaseFragment
     implements Callback<Tracks> {
 
+    public static final String ARTIST_ID_EXTRA = "artistId";
+    public static final String COUNTRY_ID = "US";
     private ArtistTracksAdapter mAdapter;
 
     public ArtistTracksActivityFragment() {
@@ -31,14 +33,13 @@ public class ArtistTracksActivityFragment extends BaseFragment
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_artist_tracks, container, false);
 
+
         mAdapter = new ArtistTracksAdapter(getActivity(), new ArrayList<Track>());
         ListView listView = (ListView) view.findViewById(R.id.lv_tracks);
         listView.setAdapter(mAdapter);
 
-        // placeholder - automatically search for now
-        String id = "43ZHCT0cAZBISjO8DG9PnE"; // elvis
-        String country = "US";
-        searchForTracks(id, country);
+        String artistId = getActivity().getIntent().getStringExtra(ARTIST_ID_EXTRA);
+        searchForTracks(artistId, COUNTRY_ID);
 
         return view;
     }
