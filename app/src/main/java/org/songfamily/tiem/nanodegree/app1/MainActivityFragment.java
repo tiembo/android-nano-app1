@@ -1,12 +1,18 @@
 package org.songfamily.tiem.nanodegree.app1;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -18,9 +24,10 @@ import retrofit.client.Response;
 
 
 public class MainActivityFragment extends BaseFragment
-        implements Callback<ArtistsPager>, AdapterView.OnItemClickListener {
+        implements Callback<ArtistsPager>, AdapterView.OnItemClickListener, TextView.OnEditorActionListener {
 
     private SearchResultsAdapter mAdapter;
+    private EditText mEditText;
 
     public MainActivityFragment() {
         super();
@@ -37,8 +44,8 @@ public class MainActivityFragment extends BaseFragment
         listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(this);
 
-        // placeholder - automatically search for now
-        searchForArtist("coldplay");
+        mEditText = (EditText) view.findViewById(R.id.et_search);
+        mEditText.setOnEditorActionListener(this);
 
         return view;
     }
@@ -73,5 +80,25 @@ public class MainActivityFragment extends BaseFragment
         intent.putExtra(ArtistTracksActivityFragment.ARTIST_ID_EXTRA, artist.id);
         intent.putExtra(ArtistTracksActivityFragment.ARTIST_NAME_EXTRA, artist.name);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+        if (i == EditorInfo.IME_ACTION_SEARCH || hardwareEnterKeyPressed(keyEvent)) {
+            hideSoftKeyboard();
+            searchForArtist(textView.getText().toString());
+            return true;
+        }
+        return false;
+    }
+
+    private boolean hardwareEnterKeyPressed(KeyEvent keyEvent) {
+        return (keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER);
+    }
+
+    // from http://stackoverflow.com/a/1109108/887198
+    private void hideSoftKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
     }
 }
