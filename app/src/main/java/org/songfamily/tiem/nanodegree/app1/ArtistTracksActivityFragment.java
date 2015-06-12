@@ -1,6 +1,7 @@
 package org.songfamily.tiem.nanodegree.app1;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ public class ArtistTracksActivityFragment extends BaseFragment
     implements Callback<Tracks> {
 
     public static final String ARTIST_ID_EXTRA = "artistId";
+    public static final String ARTIST_NAME_EXTRA = "artistName";
     public static final String COUNTRY_ID = "US";
     private ArtistTracksAdapter mAdapter;
 
@@ -33,12 +35,20 @@ public class ArtistTracksActivityFragment extends BaseFragment
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_artist_tracks, container, false);
 
-
+        // initialize Adapter and set to ListView
         mAdapter = new ArtistTracksAdapter(getActivity(), new ArrayList<Track>());
         ListView listView = (ListView) view.findViewById(R.id.lv_tracks);
         listView.setAdapter(mAdapter);
 
-        String artistId = getActivity().getIntent().getStringExtra(ARTIST_ID_EXTRA);
+        // set action bar subtitle with artists's name
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        String artistName = activity.getIntent().getStringExtra(ARTIST_NAME_EXTRA);
+        android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setSubtitle(artistName);
+
+        // search Spotify for the artist's top tracks
+        String artistId = activity.getIntent().getStringExtra(ARTIST_ID_EXTRA);
         searchForTracks(artistId, COUNTRY_ID);
 
         return view;
@@ -53,12 +63,13 @@ public class ArtistTracksActivityFragment extends BaseFragment
 
     @Override
     public void success(final Tracks tracks, Response response) {
+
         // update adapter with data from server
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mAdapter.clear();
-                mAdapter.addAll(tracks.tracks);
+                mAdapter.addAll(tracks.tracks); // server returns a maximum of 10 results
                 mAdapter.notifyDataSetChanged();
             }
         });

@@ -68,9 +68,10 @@ public class MainActivityFragment extends BaseFragment
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        String artistId = mAdapter.getItem(i).id;
+        Artist artist = mAdapter.getItem(i);
         Intent intent = new Intent(getActivity(), ArtistTracksActivity.class);
-        intent.putExtra(ArtistTracksActivityFragment.ARTIST_ID_EXTRA, artistId);
+        intent.putExtra(ArtistTracksActivityFragment.ARTIST_ID_EXTRA, artist.id);
+        intent.putExtra(ArtistTracksActivityFragment.ARTIST_NAME_EXTRA, artist.name);
         startActivity(intent);
     }
 }
