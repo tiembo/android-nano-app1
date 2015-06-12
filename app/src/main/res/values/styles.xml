@@ -21,13 +21,13 @@
     <style name="ListItemView">
         <item name="android:layout_marginLeft">@dimen/list_item_view_margin</item>
         <item name="android:layout_marginRight">@dimen/list_item_view_margin</item>
-        <item name="android:layout_marginTop">@dimen/list_item_view_margin</item>
-        <item name="android:layout_marginBottom">@dimen/list_item_view_margin</item>
     </style>
 
     <style name="ListItemView.Image">
         <item name="android:layout_width">@dimen/list_item_logo_square_size</item>
         <item name="android:layout_height">@dimen/list_item_logo_square_size</item>
+        <item name="android:layout_marginTop">@dimen/list_item_view_margin</item>
+        <item name="android:layout_marginBottom">@dimen/list_item_view_margin</item>
     </style>
 
     <style name="ListItemView.Text">
