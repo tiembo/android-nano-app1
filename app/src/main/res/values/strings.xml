@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Spotify Streamer</string>
-    <string name="et_search">Search Spotify</string>
+    <string name="et_search">Search for an artist</string>
     <string name="title_activity_artist_tracks">Top 10 Tracks</string>
+    <string name="empty_search_field">Please enter an artist to search for.</string>
+    <string name="no_search_results">No artists found. Please refine your search.</string>
+    <string name="no_tracks">No tracks available for artist.</string>
 </resources>

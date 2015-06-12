@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.ArtistsPager;
@@ -61,9 +62,15 @@ public class MainActivityFragment extends BaseFragment
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mAdapter.clear();
-                mAdapter.addAll(artistsPager.artists.items);
-                mAdapter.notifyDataSetChanged();
+                List<Artist> items = artistsPager.artists.items;
+                if (items.size() > 0) {
+                    hideSoftKeyboard();
+                    mAdapter.clear();
+                    mAdapter.addAll(items);
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    showToast(R.string.no_search_results);
+                }
             }
         });
     }
@@ -85,8 +92,12 @@ public class MainActivityFragment extends BaseFragment
     @Override
     public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
         if (i == EditorInfo.IME_ACTION_SEARCH || hardwareEnterKeyPressed(keyEvent)) {
-            hideSoftKeyboard();
-            searchForArtist(textView.getText().toString());
+            String searchTerm = textView.getText().toString();
+
+            if (searchTerm.isEmpty())
+                showToast(R.string.empty_search_field);
+            else
+                searchForArtist(searchTerm);
             return true;
         }
         return false;

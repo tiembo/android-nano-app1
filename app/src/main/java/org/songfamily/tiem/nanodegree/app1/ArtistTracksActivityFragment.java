@@ -9,6 +9,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import kaaes.spotify.webapi.android.models.Track;
@@ -68,9 +69,15 @@ public class ArtistTracksActivityFragment extends BaseFragment
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mAdapter.clear();
-                mAdapter.addAll(tracks.tracks); // server returns a maximum of 10 results
-                mAdapter.notifyDataSetChanged();
+                List<Track> trackList = tracks.tracks;
+
+                if (trackList.size() == 0) {
+                    showToast(R.string.no_tracks);
+                } else {
+                    mAdapter.clear();
+                    mAdapter.addAll(trackList); // server returns a maximum of 10 results
+                    mAdapter.notifyDataSetChanged();
+                }
             }
         });
     }
