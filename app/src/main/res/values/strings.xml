@@ -2,5 +2,4 @@
     <string name="app_name">Spotify Streamer</string>
     <string name="et_search">Search Spotify</string>
     <string name="title_activity_artist_tracks">Top 10 Tracks</string>
-    <string name="hello_world">Hello world!</string>
 </resources>

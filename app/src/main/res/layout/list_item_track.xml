@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/ListItemContainer"
+    android:orientation="horizontal"
+    tools:ignore="UseCompoundDrawables">
+
+    <ImageView
+        android:id="@+id/iv_track_image"
+        style="@style/ListItemView.Image"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_track_name"
+            style="@style/ListItemView.Text"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:singleLine="true"
+            tools:text="Track Name"/>
+
+        <TextView
+            android:id="@+id/tv_album_name"
+            style="@style/ListItemView.Text"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:singleLine="true"
+            tools:text="Album Name"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>
