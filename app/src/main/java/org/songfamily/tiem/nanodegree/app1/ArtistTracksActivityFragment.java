@@ -66,7 +66,8 @@ public class ArtistTracksActivityFragment extends BaseFragment
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        BundleHelper.putTrackList(outState, mTrackList);
+        if (mTrackList != null)
+            BundleHelper.putTrackList(outState, mTrackList);
     }
 
     private void searchForTracks(String artistId, String countryCode) {

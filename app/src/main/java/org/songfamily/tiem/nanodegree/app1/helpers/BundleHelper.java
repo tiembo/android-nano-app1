@@ -1,6 +1,7 @@
 package org.songfamily.tiem.nanodegree.app1.helpers;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,24 +15,22 @@ public class BundleHelper {
     private static final String KEY_ALBUM_NAMES = "albumNames";
     private static final String KEY_TRACK_IMAGE_URLS = "trackImageUrls";
 
-    public static void putTrackList(Bundle bundle, List<Track> trackList) {
-        if (trackList != null) {
-            int numTracks = trackList.size();
-            String[] trackNames = new String[numTracks];
-            String[] albumNames = new String[numTracks];
-            String[] trackImageUrls = new String[numTracks];
+    public static void putTrackList(Bundle bundle, @NonNull List<Track> trackList) {
+        int numTracks = trackList.size();
+        String[] trackNames = new String[numTracks];
+        String[] albumNames = new String[numTracks];
+        String[] trackImageUrls = new String[numTracks];
 
-            for (int i = 0; i < numTracks; i++) {
-                Track t = trackList.get(i);
-                trackNames[i] = t.name;
-                albumNames[i] = t.album.name;
-                trackImageUrls[i] = ImageHelper.getImageUrl(t);
-            }
-
-            bundle.putStringArray(KEY_TRACK_NAMES, trackNames);
-            bundle.putStringArray(KEY_ALBUM_NAMES, albumNames);
-            bundle.putStringArray(KEY_TRACK_IMAGE_URLS, trackImageUrls);
+        for (int i = 0; i < numTracks; i++) {
+            Track t = trackList.get(i);
+            trackNames[i] = t.name;
+            albumNames[i] = t.album.name;
+            trackImageUrls[i] = ImageHelper.getImageUrl(t);
         }
+
+        bundle.putStringArray(KEY_TRACK_NAMES, trackNames);
+        bundle.putStringArray(KEY_ALBUM_NAMES, albumNames);
+        bundle.putStringArray(KEY_TRACK_IMAGE_URLS, trackImageUrls);
     }
 
     public static List<Track> getTrackList(Bundle bundle) {
