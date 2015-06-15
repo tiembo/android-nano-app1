@@ -1,15 +1,25 @@
 package org.songfamily.tiem.nanodegree.app1.helpers;
 
+import java.util.List;
+
+import kaaes.spotify.webapi.android.models.Artist;
+import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Track;
 
 public class ImageHelper {
 
     public static String getImageUrl(Track track) {
-        int imageCount = track.album.images.size();
+        return getImageCommon(track.album.images);
+    }
 
-        if (imageCount == 0)
+    public static String getArtistImage(Artist artist) {
+        return getImageCommon(artist.images);
+    }
+
+    private static String getImageCommon(List<Image> images) {
+        if (images.size() == 0)
             return null;
         else
-            return track.album.images.get(0).url;
+            return images.get(0).url;
     }
 }

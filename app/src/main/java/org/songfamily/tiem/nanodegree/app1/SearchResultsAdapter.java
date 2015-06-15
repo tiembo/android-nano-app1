@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.songfamily.tiem.nanodegree.app1.helpers.ImageHelper;
+
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artist;
@@ -45,7 +47,7 @@ public class SearchResultsAdapter extends ArrayAdapter<Artist> {
         Artist artist = getItem(i);
         holder.artistName.setText(artist.name);
 
-        String artistImageUrl = getArtistImage(artist);
+        String artistImageUrl = ImageHelper.getArtistImage(artist);
         if (artistImageUrl != null) {
             Picasso.with(mContext)
                     .load(artistImageUrl)
@@ -60,14 +62,5 @@ public class SearchResultsAdapter extends ArrayAdapter<Artist> {
         }
 
         return view;
-    }
-
-    private String getArtistImage(Artist artist) {
-        int imageCount = artist.images.size();
-
-        if (imageCount == 0)
-            return null;
-        else
-            return artist.images.get(0).url;
     }
 }
