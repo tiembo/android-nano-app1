@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import org.songfamily.tiem.nanodegree.app1.helpers.BundleHelper;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +28,7 @@ public class ArtistTracksActivityFragment extends BaseFragment
     public static final String ARTIST_NAME_EXTRA = "artistName";
     public static final String COUNTRY_ID = "US";
     private ArtistTracksAdapter mAdapter;
+    private List<Track> mTrackList;
 
     public ArtistTracksActivityFragment() {
         super();
@@ -48,11 +51,22 @@ public class ArtistTracksActivityFragment extends BaseFragment
         if (actionBar != null)
             actionBar.setSubtitle(artistName);
 
-        // search Spotify for the artist's top tracks
-        String artistId = activity.getIntent().getStringExtra(ARTIST_ID_EXTRA);
-        searchForTracks(artistId, COUNTRY_ID);
+        // fetch track list from Spotify if needed; otherwise use Bundle data
+        if (savedInstanceState == null) {
+            String artistId = activity.getIntent().getStringExtra(ARTIST_ID_EXTRA);
+            searchForTracks(artistId, COUNTRY_ID);
+        } else {
+            mTrackList = BundleHelper.getTrackList(savedInstanceState);
+            populateAdapter();
+        }
 
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        BundleHelper.putTrackList(outState, mTrackList);
     }
 
     private void searchForTracks(String artistId, String countryCode) {
@@ -62,6 +76,12 @@ public class ArtistTracksActivityFragment extends BaseFragment
         mService.getArtistTopTrack(artistId, params, this);
     }
 
+    private void populateAdapter() {
+        mAdapter.clear();
+        mAdapter.addAll(mTrackList);
+        mAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public void success(final Tracks tracks, Response response) {
 
@@ -69,15 +89,12 @@ public class ArtistTracksActivityFragment extends BaseFragment
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                List<Track> trackList = tracks.tracks;
+                mTrackList = tracks.tracks;
 
-                if (trackList.size() == 0) {
+                if (mTrackList.size() == 0)
                     showToast(R.string.no_tracks);
-                } else {
-                    mAdapter.clear();
-                    mAdapter.addAll(trackList); // server returns a maximum of 10 results
-                    mAdapter.notifyDataSetChanged();
-                }
+                else
+                    populateAdapter();
             }
         });
     }
