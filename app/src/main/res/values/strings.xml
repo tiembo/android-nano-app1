@@ -5,4 +5,5 @@
     <string name="empty_search_field">Please enter an artist to search for.</string>
     <string name="no_search_results">No artists found. Please refine your search.</string>
     <string name="no_tracks">No tracks available for artist.</string>
+    <string name="network_error">Error connecting to Spotify. Please try again.</string>
 </resources>

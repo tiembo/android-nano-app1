@@ -102,6 +102,11 @@ public class ArtistTracksActivityFragment extends BaseFragment
 
     @Override
     public void failure(RetrofitError error) {
-
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showToast(R.string.network_error);
+            }
+        });
     }
 }
