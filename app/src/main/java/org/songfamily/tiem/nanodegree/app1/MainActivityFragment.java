@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.songfamily.tiem.nanodegree.app1.helpers.BundleHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,7 @@ public class MainActivityFragment extends BaseFragment
 
     private SearchResultsAdapter mAdapter;
     private EditText mEditText;
+    private List<Artist> mArtlistList;
 
     public MainActivityFragment() {
         super();
@@ -48,11 +51,30 @@ public class MainActivityFragment extends BaseFragment
         mEditText = (EditText) view.findViewById(R.id.et_search);
         mEditText.setOnEditorActionListener(this);
 
+        // use artist data from Bundle, if available
+        if (savedInstanceState != null) {
+            mArtlistList = BundleHelper.getArtistList(savedInstanceState);
+            populateAdapter();
+        }
+
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mArtlistList != null)
+            BundleHelper.putArtistList(outState, mArtlistList);
     }
 
     private void searchForArtist(String artist) {
         mService.searchArtists(artist, this);
+    }
+
+    private void populateAdapter() {
+        mAdapter.clear();
+        mAdapter.addAll(mArtlistList);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -62,12 +84,10 @@ public class MainActivityFragment extends BaseFragment
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                List<Artist> items = artistsPager.artists.items;
-                if (items.size() > 0) {
+                mArtlistList = artistsPager.artists.items;
+                if (mArtlistList.size() > 0) {
+                    populateAdapter();
                     hideSoftKeyboard();
-                    mAdapter.clear();
-                    mAdapter.addAll(items);
-                    mAdapter.notifyDataSetChanged();
                 } else {
                     showToast(R.string.no_search_results);
                 }

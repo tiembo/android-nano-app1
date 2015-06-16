@@ -7,13 +7,53 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Album;
+import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Track;
 
 public class BundleHelper {
+    private static final String KEY_ARTIST_NAMES = "artistNames";
+    private static final String KEY_ARTIST_IDS = "artistIds";
+    private static final String KEY_ARTIST_IMAGE_URLS = "artistImageUrls";
     private static final String KEY_TRACK_NAMES = "trackNames";
     private static final String KEY_ALBUM_NAMES = "albumNames";
     private static final String KEY_TRACK_IMAGE_URLS = "trackImageUrls";
+
+    public static void putArtistList(Bundle bundle, @NonNull List<Artist> artistList) {
+        int numArtists = artistList.size();
+        String[] artistNames = new String[numArtists];
+        String[] artistImageUrls = new String[numArtists];
+        String[] artistIds = new String[numArtists];
+
+        for (int i = 0; i < numArtists; i++) {
+            Artist a =  artistList.get(i);
+            artistNames[i] = a.name;
+            artistIds[i] = a.id;
+            artistImageUrls[i] = ImageHelper.getArtistImage(a);
+        }
+
+        bundle.putStringArray(KEY_ARTIST_NAMES, artistNames);
+        bundle.putStringArray(KEY_ARTIST_IMAGE_URLS, artistImageUrls);
+        bundle.putStringArray(KEY_ARTIST_IDS, artistIds);
+    }
+
+    public static List<Artist> getArtistList(Bundle bundle) {
+        String[] artistNames = bundle.getStringArray(KEY_ARTIST_NAMES);
+        String[] artistImageUrls = bundle.getStringArray(KEY_ARTIST_IMAGE_URLS);
+        String[] artistIds = bundle.getStringArray(KEY_ARTIST_IDS);
+
+        List<Artist> artistList = new ArrayList<>();
+
+        for (int i = 0; i < artistNames.length; i++) {
+            Artist a = new Artist();
+            a.images = createImageList(artistImageUrls[i]);
+            a.name = artistNames[i];
+            a.id = artistIds[i];
+            artistList.add(a);
+        }
+
+        return artistList;
+    }
 
     public static void putTrackList(Bundle bundle, @NonNull List<Track> trackList) {
         int numTracks = trackList.size();
@@ -41,16 +81,8 @@ public class BundleHelper {
         List<Track> trackList = new ArrayList<>();
 
         for (int i = 0; i < trackNames.length; i++) {
-            List<Image> images = new ArrayList<>();
-            String imageUrl = trackImageUrls[i];
-            if (imageUrl != null) {
-                Image image = new Image();
-                image.url = imageUrl;
-                images.add(image);
-            }
-
             Album a = new Album();
-            a.images = images;
+            a.images = createImageList(trackImageUrls[i]);
             a.name = albumNames[i];
             Track t = new Track();
             t.album = a;
@@ -59,5 +91,16 @@ public class BundleHelper {
         }
 
         return trackList;
+    }
+
+    private static List<Image> createImageList(String imageUrl) {
+        List<Image> images = new ArrayList<>();
+        if (imageUrl != null) {
+            Image image = new Image();
+            image.url = imageUrl;
+            images.add(image);
+        }
+
+        return images;
     }
 }
