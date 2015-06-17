@@ -11,6 +11,9 @@ import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Track;
 
+/**
+ * Helper methods to store and fetch bundles
+ */
 public class BundleHelper {
     private static final String KEY_ARTIST_NAMES = "artistNames";
     private static final String KEY_ARTIST_IDS = "artistIds";
@@ -93,6 +96,13 @@ public class BundleHelper {
         return trackList;
     }
 
+    /**
+     * Creates a List containing a single Image object with its url field set to the specified
+     * string.
+     *
+     * @param imageUrl URL of Image
+     * @return List containing a single Image with its url field set to imageUrl
+     */
     private static List<Image> createImageList(String imageUrl) {
         List<Image> images = new ArrayList<>();
         if (imageUrl != null) {

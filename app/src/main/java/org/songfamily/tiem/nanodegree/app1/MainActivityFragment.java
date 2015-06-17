@@ -48,6 +48,7 @@ public class MainActivityFragment extends BaseFragment
         listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(this);
 
+        // set listener for when the user taps on a list item
         mEditText = (EditText) view.findViewById(R.id.et_search);
         mEditText.setOnEditorActionListener(this);
 
@@ -105,6 +106,7 @@ public class MainActivityFragment extends BaseFragment
         });
     }
 
+    // Navigates user to view an artist's track list
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Artist artist = mAdapter.getItem(i);
@@ -114,6 +116,7 @@ public class MainActivityFragment extends BaseFragment
         startActivity(intent);
     }
 
+    // Handles keyboard request to start search
     @Override
     public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
         if (i == EditorInfo.IME_ACTION_SEARCH || hardwareEnterKeyPressed(keyEvent)) {

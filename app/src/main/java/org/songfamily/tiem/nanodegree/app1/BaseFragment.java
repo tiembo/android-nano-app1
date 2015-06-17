@@ -21,6 +21,12 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
+    /**
+     * Shows toast with a message associated with the specified string resource id.
+     * Cancels current toast if one is currently being displayed.
+     *
+     * @param stringId string resource id of text to show in toast
+     */
     protected void showToast(int stringId) {
         if (mToast != null)
             mToast.cancel();

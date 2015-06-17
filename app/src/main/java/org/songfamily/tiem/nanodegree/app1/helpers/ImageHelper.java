@@ -8,10 +8,22 @@ import kaaes.spotify.webapi.android.models.Track;
 
 public class ImageHelper {
 
+    /**
+     * Fetch image URL relevant to the specified track
+     *
+     * @param track Track
+     * @return URL of image
+     */
     public static String getImageUrl(Track track) {
         return getImageCommon(track.album.images);
     }
 
+    /**
+     * Fetch image URL relevant to the specified artist
+     *
+     * @param artist Artist
+     * @return URL of image
+     */
     public static String getArtistImage(Artist artist) {
         return getImageCommon(artist.images);
     }
