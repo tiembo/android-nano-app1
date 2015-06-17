@@ -32,7 +32,7 @@ public class BundleHelper {
             Artist a =  artistList.get(i);
             artistNames[i] = a.name;
             artistIds[i] = a.id;
-            artistImageUrls[i] = ImageHelper.getArtistImage(a);
+            artistImageUrls[i] = ImageHelper.getImageUrl(a.images);
         }
 
         bundle.putStringArray(KEY_ARTIST_NAMES, artistNames);
@@ -68,7 +68,7 @@ public class BundleHelper {
             Track t = trackList.get(i);
             trackNames[i] = t.name;
             albumNames[i] = t.album.name;
-            trackImageUrls[i] = ImageHelper.getImageUrl(t);
+            trackImageUrls[i] = ImageHelper.getImageUrl(t.album.images);
         }
 
         bundle.putStringArray(KEY_TRACK_NAMES, trackNames);

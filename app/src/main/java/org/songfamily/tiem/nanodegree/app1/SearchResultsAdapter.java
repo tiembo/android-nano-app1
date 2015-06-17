@@ -47,7 +47,7 @@ public class SearchResultsAdapter extends ArrayAdapter<Artist> {
         Artist artist = getItem(i);
         holder.artistName.setText(artist.name);
 
-        String artistImageUrl = ImageHelper.getArtistImage(artist);
+        String artistImageUrl = ImageHelper.getImageUrl(artist.images);
         if (artistImageUrl != null) {
             Picasso.with(mContext)
                     .load(artistImageUrl)

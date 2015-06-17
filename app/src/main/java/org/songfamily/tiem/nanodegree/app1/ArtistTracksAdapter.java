@@ -50,7 +50,7 @@ public class ArtistTracksAdapter extends ArrayAdapter<Track> {
         holder.trackName.setText(track.name);
         holder.albumName.setText(track.album.name);
 
-        String trackImageUrl = ImageHelper.getImageUrl(track);
+        String trackImageUrl = ImageHelper.getImageUrl(track.album.images);
         if (trackImageUrl != null) {
             Picasso.with(mContext)
                     .load(trackImageUrl)
