@@ -51,14 +51,10 @@ public class SearchResultsAdapter extends ArrayAdapter<Artist> {
         if (artistImageUrl != null) {
             Picasso.with(mContext)
                     .load(artistImageUrl)
-
-                    // TODO: change this
-                    .error(R.drawable.abc_btn_radio_material)
+                    .error(R.drawable.ic_cloud_off_black_48dp)
                     .into(holder.artistImage);
         } else {
-
-            // TODO: change this to match default ImageView drawable
-            holder.artistImage.setImageResource(R.drawable.abc_ab_share_pack_mtrl_alpha);
+            holder.artistImage.setImageResource(R.drawable.ic_library_music_black_48dp);
         }
 
         return view;

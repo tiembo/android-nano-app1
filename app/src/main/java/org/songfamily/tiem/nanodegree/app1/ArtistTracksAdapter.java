@@ -54,14 +54,10 @@ public class ArtistTracksAdapter extends ArrayAdapter<Track> {
         if (trackImageUrl != null) {
             Picasso.with(mContext)
                     .load(trackImageUrl)
-
-                    // TODO: change this
-                    .error(R.drawable.abc_btn_radio_material)
+                    .error(R.drawable.ic_cloud_off_black_48dp)
                     .into(holder.trackImage);
         } else {
-
-            // TODO: change this to match default ImageView drawable
-            holder.trackImage.setImageResource(R.drawable.abc_ab_share_pack_mtrl_alpha);
+            holder.trackImage.setImageResource(R.drawable.ic_library_music_black_48dp);
         }
 
         return view;
