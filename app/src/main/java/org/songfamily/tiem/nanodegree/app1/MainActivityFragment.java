@@ -48,9 +48,11 @@ public class MainActivityFragment extends BaseFragment
         mAdapter = new SearchResultsAdapter(getActivity(), new ArrayList<Artist>());
         ListView listView = (ListView) view.findViewById(R.id.lv_search_results);
         listView.setAdapter(mAdapter);
-        listView.setOnItemClickListener(this);
 
         // set listener for when the user taps on a list item
+        listView.setOnItemClickListener(this);
+
+        // set listener for when user submits their EditText query
         mEditText = (EditText) view.findViewById(R.id.et_search);
         mEditText.setOnEditorActionListener(this);
 
