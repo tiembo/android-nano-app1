@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import org.songfamily.tiem.nanodegree.app1.helpers.BundleHelper;
 
@@ -31,6 +32,7 @@ public class MainActivityFragment extends BaseFragment
 
     private SearchResultsAdapter mAdapter;
     private EditText mEditText;
+    private ViewSwitcher mViewSwitcher;
     private List<Artist> mArtlistList;
 
     public MainActivityFragment() {
@@ -52,6 +54,9 @@ public class MainActivityFragment extends BaseFragment
         mEditText = (EditText) view.findViewById(R.id.et_search);
         mEditText.setOnEditorActionListener(this);
 
+        // used to show / hide progress bar during network activity
+        mViewSwitcher = (ViewSwitcher) view.findViewById(R.id.vs_search);
+
         // use artist data from Bundle, if available
         if (savedInstanceState != null) {
             mArtlistList = BundleHelper.getArtistList(savedInstanceState);
@@ -69,6 +74,7 @@ public class MainActivityFragment extends BaseFragment
     }
 
     private void searchForArtist(String artist) {
+        mViewSwitcher.showNext();
         mService.searchArtists(artist, this);
     }
 
@@ -85,6 +91,7 @@ public class MainActivityFragment extends BaseFragment
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mViewSwitcher.showNext();
                 mArtlistList = artistsPager.artists.items;
                 if (mArtlistList.size() > 0) {
                     populateAdapter();
@@ -101,6 +108,7 @@ public class MainActivityFragment extends BaseFragment
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mViewSwitcher.showNext();
                 showToast(R.string.network_error);
             }
         });

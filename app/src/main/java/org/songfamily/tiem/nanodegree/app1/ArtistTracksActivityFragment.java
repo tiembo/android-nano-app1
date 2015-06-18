@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ViewSwitcher;
 
 import org.songfamily.tiem.nanodegree.app1.helpers.BundleHelper;
 
@@ -29,6 +30,7 @@ public class ArtistTracksActivityFragment extends BaseFragment
     public static final String COUNTRY_ID = "US";
     private ArtistTracksAdapter mAdapter;
     private List<Track> mTrackList;
+    private ViewSwitcher mViewSwitcher;
 
     public ArtistTracksActivityFragment() {
         super();
@@ -51,6 +53,9 @@ public class ArtistTracksActivityFragment extends BaseFragment
         if (actionBar != null)
             actionBar.setSubtitle(artistName);
 
+        // used to show / hide progress bar during network activity
+        mViewSwitcher = (ViewSwitcher) view.findViewById(R.id.vs_tracks);
+
         // fetch track list from Spotify if needed; otherwise use Bundle data
         if (savedInstanceState == null) {
             String artistId = activity.getIntent().getStringExtra(ARTIST_ID_EXTRA);
@@ -71,6 +76,8 @@ public class ArtistTracksActivityFragment extends BaseFragment
     }
 
     private void searchForTracks(String artistId, String countryCode) {
+        mViewSwitcher.showNext();
+
         Map<String, Object> params = new HashMap<>(1);
         params.put("country", countryCode);
 
@@ -90,6 +97,7 @@ public class ArtistTracksActivityFragment extends BaseFragment
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mViewSwitcher.showNext();
                 mTrackList = tracks.tracks;
 
                 if (mTrackList.size() == 0)
@@ -105,6 +113,7 @@ public class ArtistTracksActivityFragment extends BaseFragment
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mViewSwitcher.showNext();
                 showToast(R.string.network_error);
             }
         });

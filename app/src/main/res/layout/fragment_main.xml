@@ -13,10 +13,19 @@
         android:inputType="text"
         android:hint="@string/et_search" />
 
-    <ListView
-        android:id="@+id/lv_search_results"
+    <ViewSwitcher
+        android:id="@+id/vs_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/et_search" />
+        android:layout_below="@id/et_search">
+
+        <ListView
+            android:id="@+id/lv_search_results"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ProgressBar style="@style/MyProgressBar" />
+
+    </ViewSwitcher>
 
 </RelativeLayout>
