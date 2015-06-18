@@ -21,9 +21,11 @@
         style="@style/PlayTrackTextView"
         tools:text="Album name"/>
 
+    <!-- temporarily setting static dimensions for layout tweaking -->
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/pt_iv_album_image"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:contentDescription="@string/album_artwork" />
 
     <TextView
