@@ -27,6 +27,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.songfamily.tiem.nanodegree.app1.MainActivity" />
         </activity>
+        <activity
+            android:name=".PlayTrackActivity"
+            android:label="@string/title_activity_play_track" >
+        </activity>
     </application>
 
 </manifest>

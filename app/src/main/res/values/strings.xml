@@ -6,4 +6,11 @@
     <string name="no_search_results">No artists found. Please refine your search.</string>
     <string name="no_tracks">No tracks available for artist.</string>
     <string name="network_error">Error connecting to Spotify. Please try again.</string>
+
+    <!-- play track activity -->
+    <string name="title_activity_play_track">Play Track</string>
+    <string name="previous_track">Previous Track</string>
+    <string name="play_pause_track">Play / Pause Track</string>
+    <string name="next_track">Next Track</string>
+    <string name="album_artwork">Album artwork</string>
 </resources>

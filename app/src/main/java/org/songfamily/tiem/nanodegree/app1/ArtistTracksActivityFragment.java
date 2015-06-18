@@ -1,10 +1,12 @@
 package org.songfamily.tiem.nanodegree.app1;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ViewSwitcher;
 
@@ -23,7 +25,7 @@ import retrofit.client.Response;
 
 
 public class ArtistTracksActivityFragment extends BaseFragment
-    implements Callback<Tracks> {
+    implements Callback<Tracks>, ListView.OnItemClickListener {
 
     public static final String ARTIST_ID_EXTRA = "artistId";
     public static final String ARTIST_NAME_EXTRA = "artistName";
@@ -45,6 +47,7 @@ public class ArtistTracksActivityFragment extends BaseFragment
         mAdapter = new ArtistTracksAdapter(getActivity(), new ArrayList<Track>());
         ListView listView = (ListView) view.findViewById(R.id.lv_tracks);
         listView.setAdapter(mAdapter);
+        listView.setOnItemClickListener(this);
 
         // set action bar subtitle with artists's name
         AppCompatActivity activity = (AppCompatActivity) getActivity();
@@ -117,5 +120,11 @@ public class ArtistTracksActivityFragment extends BaseFragment
                 showToast(R.string.network_error);
             }
         });
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Intent intent = new Intent(getActivity(), PlayTrackActivity.class);
+        startActivity(intent);
     }
 }

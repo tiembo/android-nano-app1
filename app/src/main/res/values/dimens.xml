@@ -8,4 +8,7 @@
     <dimen name="list_item_vertical_padding">4dp</dimen>
     <dimen name="list_item_logo_square_size">48dp</dimen>
     <dimen name="list_item_view_margin">4dp</dimen>
+
+    <!-- for media controls on play track activity -->
+    <dimen name="media_control_image_square_size">48dp</dimen>
 </resources>
