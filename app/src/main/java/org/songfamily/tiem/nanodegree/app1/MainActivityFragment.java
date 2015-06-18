@@ -3,16 +3,13 @@ package org.songfamily.tiem.nanodegree.app1;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.SearchView;
 import android.widget.ViewSwitcher;
 
 import org.songfamily.tiem.nanodegree.app1.helpers.BundleHelper;
@@ -28,10 +25,10 @@ import retrofit.client.Response;
 
 
 public class MainActivityFragment extends BaseFragment
-        implements Callback<ArtistsPager>, AdapterView.OnItemClickListener, TextView.OnEditorActionListener {
+        implements Callback<ArtistsPager>, AdapterView.OnItemClickListener {
 
     private SearchResultsAdapter mAdapter;
-    private EditText mEditText;
+    private SearchView mSearchView;
     private ViewSwitcher mViewSwitcher;
     private List<Artist> mArtlistList;
 
@@ -53,8 +50,19 @@ public class MainActivityFragment extends BaseFragment
         listView.setOnItemClickListener(this);
 
         // set listener for when user submits their EditText query
-        mEditText = (EditText) view.findViewById(R.id.et_search);
-        mEditText.setOnEditorActionListener(this);
+        mSearchView = (SearchView) view.findViewById(R.id.sv_search);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                searchForArtist(s);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
 
         // used to show / hide progress bar during network activity
         mViewSwitcher = (ViewSwitcher) view.findViewById(R.id.vs_search);
@@ -126,28 +134,9 @@ public class MainActivityFragment extends BaseFragment
         startActivity(intent);
     }
 
-    // Handles keyboard request to start search
-    @Override
-    public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-        if (i == EditorInfo.IME_ACTION_SEARCH || hardwareEnterKeyPressed(keyEvent)) {
-            String searchTerm = textView.getText().toString();
-
-            if (searchTerm.isEmpty())
-                showToast(R.string.empty_search_field);
-            else
-                searchForArtist(searchTerm);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean hardwareEnterKeyPressed(KeyEvent keyEvent) {
-        return (keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER);
-    }
-
     // from http://stackoverflow.com/a/1109108/887198
     private void hideSoftKeyboard() {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0);
     }
 }
