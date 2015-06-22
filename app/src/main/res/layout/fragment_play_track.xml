@@ -73,6 +73,7 @@
             android:id="@+id/pt_iv_play_pause_track"
             style="@style/PlayTrackImage"
             android:layout_weight="1"
+            android:clickable="true"
             android:src="@android:drawable/ic_media_play"
             android:contentDescription="@string/play_pause_track" />
 
