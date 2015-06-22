@@ -27,6 +27,7 @@ public class PlayTrackActivityFragment extends BaseFragment
     private MediaPlayer mMediaPlayer = null;
     private boolean mIsTrackPrepared = false;
     private String mTrackPreviewUrl;
+    private ImageView mPlayPauseButton;
 
     public PlayTrackActivityFragment() {
     }
@@ -59,8 +60,8 @@ public class PlayTrackActivityFragment extends BaseFragment
                 .into(ivAlbumImage);
 
         // set up play / pause button
-        ImageView playPauseButton = (ImageView) view.findViewById(R.id.pt_iv_play_pause_track);
-        playPauseButton.setOnClickListener(this);
+        mPlayPauseButton = (ImageView) view.findViewById(R.id.pt_iv_play_pause_track);
+        mPlayPauseButton.setOnClickListener(this);
 
         return view;
     }
@@ -75,6 +76,7 @@ public class PlayTrackActivityFragment extends BaseFragment
 
     private void playTrack() {
         if (mIsTrackPrepared) {
+            mPlayPauseButton.setImageResource(android.R.drawable.ic_media_pause);
             mMediaPlayer.start();
         } else {
             try {
@@ -91,10 +93,12 @@ public class PlayTrackActivityFragment extends BaseFragment
         if (mMediaPlayer == null)
             initMediaPlayer();
 
-        if (mMediaPlayer.isPlaying())
+        if (mMediaPlayer.isPlaying()) {
+            mPlayPauseButton.setImageResource(android.R.drawable.ic_media_play);
             mMediaPlayer.pause();
-        else
+        } else {
             playTrack();
+        }
     }
 
     // *** begin media player helper methods and callbacks section ************
