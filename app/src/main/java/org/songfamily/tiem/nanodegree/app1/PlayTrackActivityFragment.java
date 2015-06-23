@@ -12,17 +12,20 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.songfamily.tiem.nanodegree.app1.helpers.BundleHelper;
+import org.songfamily.tiem.nanodegree.app1.helpers.ImageHelper;
+
 import java.io.IOException;
+
+import kaaes.spotify.webapi.android.models.Track;
 
 
 public class PlayTrackActivityFragment extends BaseFragment
     implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
         View.OnClickListener {
-    public static final String ALBUM_IMAGE_URL = "album_image_url";
-    public static final String ALBUM_NAME = "album_name";
-    public static final String ARTIST_NAME = "artist_name";
-    public static final String TRACK_NAME = "track_name";
-    public static final String TRACk_PREVIEW_URL = "track_preview_url";
+
+    public static final String TRACK_LIST_BUNDLE = "trackListBundle";
+    public static final String TRACK_SELECTED = "trackSelect";
 
     private MediaPlayer mMediaPlayer = null;
     private boolean mIsTrackPrepared = false;
@@ -39,11 +42,15 @@ public class PlayTrackActivityFragment extends BaseFragment
 
         // fetch track information from bundle...
         Intent intent = getActivity().getIntent();
-        String albumImageUrl = intent.getStringExtra(ALBUM_IMAGE_URL);
-        String albumName = intent.getStringExtra(ALBUM_NAME);
-        String artistName = intent.getStringExtra(ARTIST_NAME);
-        String trackName = intent.getStringExtra(TRACK_NAME);
-        mTrackPreviewUrl = intent.getStringExtra(TRACk_PREVIEW_URL);
+        Bundle bundle = intent.getBundleExtra(TRACK_LIST_BUNDLE);
+        int trackSelected = intent.getIntExtra(TRACK_SELECTED, 0);
+        Track track = BundleHelper.getTrackList(bundle).get(trackSelected);
+
+        String albumImageUrl = ImageHelper.getImageUrl(track.album.images);
+        String albumName = track.album.name;
+        String artistName = track.artists.get(0).name;
+        String trackName = track.name;
+        mTrackPreviewUrl = track.preview_url;
 
         // ...and write to views...
         TextView tvAlbumName = (TextView) view.findViewById(R.id.pt_tv_album_name);

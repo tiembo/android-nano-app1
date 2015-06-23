@@ -11,7 +11,6 @@ import android.widget.ListView;
 import android.widget.ViewSwitcher;
 
 import org.songfamily.tiem.nanodegree.app1.helpers.BundleHelper;
-import org.songfamily.tiem.nanodegree.app1.helpers.ImageHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,13 +124,12 @@ public class ArtistTracksActivityFragment extends BaseFragment
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Track track = mAdapter.getItem(i);
+        Bundle bundle = new Bundle();
+        BundleHelper.putTrackList(bundle, mTrackList);
+
         Intent intent = new Intent(getActivity(), PlayTrackActivity.class);
-        intent.putExtra(PlayTrackActivityFragment.ALBUM_IMAGE_URL, ImageHelper.getImageUrl(track.album.images));
-        intent.putExtra(PlayTrackActivityFragment.ALBUM_NAME, track.album.name);
-        intent.putExtra(PlayTrackActivityFragment.ARTIST_NAME, track.artists.get(0).name);
-        intent.putExtra(PlayTrackActivityFragment.TRACK_NAME, track.name);
-        intent.putExtra(PlayTrackActivityFragment.TRACk_PREVIEW_URL, track.preview_url);
+        intent.putExtra(PlayTrackActivityFragment.TRACK_LIST_BUNDLE, bundle);
+        intent.putExtra(PlayTrackActivityFragment.TRACK_SELECTED, i);
         startActivity(intent);
     }
 }
