@@ -79,6 +79,9 @@ public class PlayTrackActivityFragment extends BaseFragment
         mPlayPauseButton = (ImageView) view.findViewById(R.id.pt_iv_play_pause_track);
         mPlayPauseButton.setOnClickListener(this);
 
+        // start playing track
+        playButtonClicked();
+
         return view;
     }
 
@@ -92,6 +95,11 @@ public class PlayTrackActivityFragment extends BaseFragment
 
     @Override
     public void onClick(View view) {
+        playButtonClicked();
+    }
+
+    // *** begin helper methods ***********************************************
+    private void playButtonClicked() {
         if (mMediaPlayer == null)
             initMediaPlayer();
 
@@ -103,7 +111,6 @@ public class PlayTrackActivityFragment extends BaseFragment
         }
     }
 
-    // *** begin helper methods
     private void playTrack() {
         if (mIsTrackPrepared) {
             setPlayIcon(PlayButtonIcon.PAUSE);
@@ -128,7 +135,7 @@ public class PlayTrackActivityFragment extends BaseFragment
                 break;
         }
     }
-    // *** end helper methods
+    // *** end helper methods *************************************************
 
     // *** begin media player helper methods and callbacks section ************
     private void initMediaPlayer() {
