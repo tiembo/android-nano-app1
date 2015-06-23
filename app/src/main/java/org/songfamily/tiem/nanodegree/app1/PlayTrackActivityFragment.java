@@ -25,6 +25,11 @@ public class PlayTrackActivityFragment extends BaseFragment
     implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
         View.OnClickListener {
 
+    enum PlayButtonIcon {
+        PLAY,
+        PAUSE
+    }
+
     public static final String TRACK_LIST_BUNDLE = "trackListBundle";
     public static final String TRACK_SELECTED = "trackSelect";
 
@@ -85,9 +90,23 @@ public class PlayTrackActivityFragment extends BaseFragment
             mMediaPlayer.release();
     }
 
+    @Override
+    public void onClick(View view) {
+        if (mMediaPlayer == null)
+            initMediaPlayer();
+
+        if (mMediaPlayer.isPlaying()) {
+            setPlayIcon(PlayButtonIcon.PLAY);
+            mMediaPlayer.pause();
+        } else {
+            playTrack();
+        }
+    }
+
+    // *** begin helper methods
     private void playTrack() {
         if (mIsTrackPrepared) {
-            mPlayPauseButton.setImageResource(android.R.drawable.ic_media_pause);
+            setPlayIcon(PlayButtonIcon.PAUSE);
             mMediaPlayer.start();
         } else {
             try {
@@ -99,18 +118,17 @@ public class PlayTrackActivityFragment extends BaseFragment
         }
     }
 
-    @Override
-    public void onClick(View view) {
-        if (mMediaPlayer == null)
-            initMediaPlayer();
-
-        if (mMediaPlayer.isPlaying()) {
-            mPlayPauseButton.setImageResource(android.R.drawable.ic_media_play);
-            mMediaPlayer.pause();
-        } else {
-            playTrack();
+    private void setPlayIcon(PlayButtonIcon icon) {
+        switch (icon) {
+            case PLAY:
+                mPlayPauseButton.setImageResource(android.R.drawable.ic_media_play);
+                break;
+            case PAUSE:
+                mPlayPauseButton.setImageResource(android.R.drawable.ic_media_pause);
+                break;
         }
     }
+    // *** end helper methods
 
     // *** begin media player helper methods and callbacks section ************
     private void initMediaPlayer() {
@@ -130,6 +148,7 @@ public class PlayTrackActivityFragment extends BaseFragment
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
         mIsTrackPrepared = false;
+        setPlayIcon(PlayButtonIcon.PLAY);
         mMediaPlayer.release();
         mMediaPlayer = null;
     }
