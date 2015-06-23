@@ -14,6 +14,7 @@ import com.squareup.picasso.Picasso;
 
 import org.songfamily.tiem.nanodegree.app1.helpers.BundleHelper;
 import org.songfamily.tiem.nanodegree.app1.helpers.ImageHelper;
+import org.songfamily.tiem.nanodegree.app1.helpers.StringHelper;
 
 import java.io.IOException;
 
@@ -30,7 +31,9 @@ public class PlayTrackActivityFragment extends BaseFragment
     private MediaPlayer mMediaPlayer = null;
     private boolean mIsTrackPrepared = false;
     private String mTrackPreviewUrl;
+
     private ImageView mPlayPauseButton;
+    private TextView mTrackLength;
 
     public PlayTrackActivityFragment() {
     }
@@ -39,6 +42,7 @@ public class PlayTrackActivityFragment extends BaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_play_track, container, false);
+        mTrackLength = (TextView) view.findViewById(R.id.pt_tv_track_length);
 
         // fetch track information from bundle...
         Intent intent = getActivity().getIntent();
@@ -119,6 +123,7 @@ public class PlayTrackActivityFragment extends BaseFragment
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
         mIsTrackPrepared = true;
+        mTrackLength.setText(StringHelper.getPlayTime(mediaPlayer.getDuration()));
         playTrack();
     }
 
