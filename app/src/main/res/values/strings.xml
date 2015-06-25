@@ -13,4 +13,5 @@
     <string name="play_pause_track">Play / Pause Track</string>
     <string name="next_track">Next Track</string>
     <string name="album_artwork">Album artwork</string>
+    <string name="action_settings">Settings</string>
 </resources>

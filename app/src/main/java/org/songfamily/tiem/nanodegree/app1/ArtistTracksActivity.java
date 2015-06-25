@@ -1,10 +1,9 @@
 package org.songfamily.tiem.nanodegree.app1;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
 
-public class ArtistTracksActivity extends AppCompatActivity {
+public class ArtistTracksActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
