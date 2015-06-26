@@ -1,7 +1,5 @@
 package org.songfamily.tiem.nanodegree.app1.helpers;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -9,18 +7,20 @@ import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Image;
 
+import static org.junit.Assert.assertEquals;
+
 public class ImageHelperTest {
 
     @Test
     public void testGetImageCommon() throws Exception {
         List<Image> noImages = new ArrayList<>(0);
-        Assert.assertEquals(null, ImageHelper.getImageUrl(noImages));
+        assertEquals(null, ImageHelper.getImageUrl(noImages));
 
         Image image1 = new Image();
         image1.url = "foo";
         List<Image> oneImage = new ArrayList<>(1);
         oneImage.add(image1);
-        Assert.assertEquals("foo", ImageHelper.getImageUrl(oneImage));
+        assertEquals("foo", ImageHelper.getImageUrl(oneImage));
 
         Image image2 = new Image();
         Image image3 = new Image();
@@ -29,6 +29,6 @@ public class ImageHelperTest {
         List<Image> twoImages = new ArrayList<>(2);
         twoImages.add(image2);
         twoImages.add(image3);
-        Assert.assertEquals("bar", ImageHelper.getImageUrl(twoImages));
+        assertEquals("bar", ImageHelper.getImageUrl(twoImages));
     }
 }
