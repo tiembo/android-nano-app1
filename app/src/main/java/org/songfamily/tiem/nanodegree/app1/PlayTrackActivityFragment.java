@@ -5,6 +5,9 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -35,12 +38,18 @@ public class PlayTrackActivityFragment extends BaseFragment
 
     private MediaPlayer mMediaPlayer = null;
     private boolean mIsTrackPrepared = false;
-    private String mTrackPreviewUrl;
+    private Track mTrack;
 
     private ImageView mPlayPauseButton;
     private TextView mTrackLength;
 
     public PlayTrackActivityFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -53,13 +62,12 @@ public class PlayTrackActivityFragment extends BaseFragment
         Intent intent = getActivity().getIntent();
         Bundle bundle = intent.getBundleExtra(TRACK_LIST_BUNDLE);
         int trackSelected = intent.getIntExtra(TRACK_SELECTED, 0);
-        Track track = BundleHelper.getTrackList(bundle).get(trackSelected);
+        mTrack = BundleHelper.getTrackList(bundle).get(trackSelected);
 
-        String albumImageUrl = ImageHelper.getImageUrl(track.album.images);
-        String albumName = track.album.name;
-        String artistName = track.artists.get(0).name;
-        String trackName = track.name;
-        mTrackPreviewUrl = track.preview_url;
+        String albumImageUrl = ImageHelper.getImageUrl(mTrack.album.images);
+        String albumName = mTrack.album.name;
+        String artistName = mTrack.artists.get(0).name;
+        String trackName = mTrack.name;
 
         // ...and write to views...
         TextView tvAlbumName = (TextView) view.findViewById(R.id.pt_tv_album_name);
@@ -94,6 +102,26 @@ public class PlayTrackActivityFragment extends BaseFragment
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_share, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_share) {
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, StringHelper.getShareText(mTrack));
+            shareIntent.setType("text/plain");
+            startActivity(Intent.createChooser(shareIntent, getActivity().getString(R.string.share_window_title)));
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onClick(View view) {
         playButtonClicked();
     }
@@ -117,7 +145,7 @@ public class PlayTrackActivityFragment extends BaseFragment
             mMediaPlayer.start();
         } else {
             try {
-                mMediaPlayer.setDataSource(mTrackPreviewUrl);
+                mMediaPlayer.setDataSource(mTrack.preview_url);
                 mMediaPlayer.prepareAsync();
             } catch (IOException e) {
                 e.printStackTrace();
