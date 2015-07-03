@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/ListItemContainer"
     android:orientation="horizontal"
+    android:background="?android:attr/activatedBackgroundIndicator"
     tools:ignore="UseCompoundDrawables">
 
     <ImageView

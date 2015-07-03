@@ -51,7 +51,7 @@ public class ArtistTracksActivityFragment extends BaseFragment
 
         // set action bar subtitle with artists's name
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        String artistName = activity.getIntent().getStringExtra(ARTIST_NAME_EXTRA);
+        String artistName = getArguments().getString(ARTIST_NAME_EXTRA);
         android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
         if (actionBar != null)
             actionBar.setSubtitle(artistName);
@@ -61,7 +61,7 @@ public class ArtistTracksActivityFragment extends BaseFragment
 
         // fetch track list from Spotify if needed; otherwise use Bundle data
         if (savedInstanceState == null) {
-            String artistId = activity.getIntent().getStringExtra(ARTIST_ID_EXTRA);
+            String artistId = getArguments().getString(ARTIST_ID_EXTRA);
             searchForTracks(artistId, COUNTRY_ID);
         } else {
             mTrackList = BundleHelper.getTrackList(savedInstanceState);
