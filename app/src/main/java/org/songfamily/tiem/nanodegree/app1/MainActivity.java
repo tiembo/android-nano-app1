@@ -9,7 +9,8 @@ import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity
-    implements MainActivityFragment.Callbacks {
+    implements MainActivityFragment.Callbacks,
+        ArtistTracksActivityFragment.Callbacks {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -81,5 +82,14 @@ public class MainActivity extends AppCompatActivity
             intent.putExtra(ArtistTracksActivityFragment.ARTIST_NAME_EXTRA, artistName);
             startActivity(intent);
         }
+    }
+
+    /**
+     * Callback method from {@link ArtistTracksActivityFragment.Callbacks}
+     * indicating that the item with the given ID was selected.
+     */
+    @Override
+    public void onItemSelected(Bundle trackList, int selectedTrack) {
+        // to be implemented
     }
 }

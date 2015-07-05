@@ -1,6 +1,6 @@
 package org.songfamily.tiem.nanodegree.app1;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -26,6 +26,12 @@ import retrofit.client.Response;
 
 public class ArtistTracksActivityFragment extends BaseFragment
     implements Callback<Tracks>, ListView.OnItemClickListener {
+
+    /**
+     * The fragment's current callback object, which is notified of list item
+     * clicks.
+     */
+    private Callbacks mCallbacks = sDummyCallbacks;
 
     public static final String ARTIST_ID_EXTRA = "artistId";
     public static final String ARTIST_NAME_EXTRA = "artistName";
@@ -69,6 +75,26 @@ public class ArtistTracksActivityFragment extends BaseFragment
         }
 
         return view;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // Activities containing this fragment must implement its callbacks.
+        if (!(activity instanceof Callbacks)) {
+            throw new IllegalStateException("Activity must implement fragment's callbacks.");
+        }
+
+        mCallbacks = (Callbacks) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        // Reset the active callbacks interface to the dummy implementation.
+        mCallbacks = sDummyCallbacks;
     }
 
     @Override
@@ -126,10 +152,27 @@ public class ArtistTracksActivityFragment extends BaseFragment
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Bundle bundle = new Bundle();
         BundleHelper.putTrackList(bundle, mTrackList);
-
-        Intent intent = new Intent(getActivity(), PlayTrackActivity.class);
-        intent.putExtra(PlayTrackActivityFragment.TRACK_LIST_BUNDLE, bundle);
-        intent.putExtra(PlayTrackActivityFragment.TRACK_SELECTED, i);
-        startActivity(intent);
+        mCallbacks.onItemSelected(bundle, i);
     }
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callbacks {
+        /**
+         * Callback for when an item has been selected.
+         */
+        void onItemSelected(Bundle trackList, int selectedTrack);
+    }
+
+    /**
+     * A dummy implementation of the {@link Callbacks} interface that does
+     * nothing. Used only when this fragment is not attached to an activity.
+     */
+    private static Callbacks sDummyCallbacks = new Callbacks() {
+        @Override
+        public void onItemSelected(Bundle trackList, int selectedTrack) {}
+    };
 }
