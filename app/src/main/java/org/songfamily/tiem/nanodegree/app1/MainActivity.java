@@ -90,6 +90,11 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onItemSelected(Bundle trackList, int selectedTrack) {
-        // to be implemented
+        PlayTrackActivityFragment fragment = new PlayTrackActivityFragment();
+        Bundle newBundle = new Bundle();
+        newBundle.putBundle(PlayTrackActivityFragment.TRACK_LIST_BUNDLE, trackList);
+        newBundle.putInt(PlayTrackActivityFragment.TRACK_SELECTED, selectedTrack);
+        fragment.setArguments(newBundle);
+        fragment.show(getFragmentManager(), PlayTrackActivityFragment.TAG);
     }
 }

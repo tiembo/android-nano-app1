@@ -1,5 +1,7 @@
 package org.songfamily.tiem.nanodegree.app1;
 
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -10,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,7 +27,7 @@ import java.io.IOException;
 import kaaes.spotify.webapi.android.models.Track;
 
 
-public class PlayTrackActivityFragment extends BaseFragment
+public class PlayTrackActivityFragment extends DialogFragment
     implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
         View.OnClickListener {
 
@@ -35,6 +38,7 @@ public class PlayTrackActivityFragment extends BaseFragment
 
     public static final String TRACK_LIST_BUNDLE = "trackListBundle";
     public static final String TRACK_SELECTED = "trackSelect";
+    public static final String TAG = "PlayTrackActivityFragment";
 
     private MediaPlayer mMediaPlayer = null;
     private boolean mIsTrackPrepared = false;
@@ -58,11 +62,10 @@ public class PlayTrackActivityFragment extends BaseFragment
         View view = inflater.inflate(R.layout.fragment_play_track, container, false);
         mTrackLength = (TextView) view.findViewById(R.id.pt_tv_track_length);
 
-        // fetch track information from bundle...
-        Intent intent = getActivity().getIntent();
-        Bundle bundle = intent.getBundleExtra(TRACK_LIST_BUNDLE);
-        int trackSelected = intent.getIntExtra(TRACK_SELECTED, 0);
-        mTrack = BundleHelper.getTrackList(bundle).get(trackSelected);
+        // fetch track information from arguments...
+        Bundle bundle = getArguments().getBundle(TRACK_LIST_BUNDLE);
+        int selectedTrack = getArguments().getInt(TRACK_SELECTED);
+        mTrack = BundleHelper.getTrackList(bundle).get(selectedTrack);
 
         String albumImageUrl = ImageHelper.getImageUrl(mTrack.album.images);
         String albumName = mTrack.album.name;
@@ -91,6 +94,17 @@ public class PlayTrackActivityFragment extends BaseFragment
         playButtonClicked();
 
         return view;
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // The only reason you might override this method when using onCreateView() is
+        // to modify any dialog characteristics. For example, the dialog includes a
+        // title by default, but your custom layout might not need it. So here you can
+        // remove the dialog title, but you must call the superclass to get the Dialog.
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
     }
 
     @Override
