@@ -6,6 +6,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -24,54 +25,29 @@ public class PlaybackService extends Service
         MediaPlayer.OnErrorListener {
 
     public static final int SERVICE_ID = 8675309;
-    public static final String ACTION_PLAY_PAUSE = "actionPlayPause";
 
-    MediaPlayer mMediaPlayer;
+    private Bundle mTrackListBundle;
+    private int mTrackSelected;
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        String action = intent.getAction();
+    // Binder given to clients
+    private final IBinder mBinder = new LocalBinder();
 
-        if (action.equals(ACTION_PLAY_PAUSE)) {
-            Bundle mTrackListBundle = intent.getBundleExtra(PlayTrackActivityFragment.TRACK_LIST_BUNDLE);
-            int mTrackSelected = intent.getIntExtra(PlayTrackActivityFragment.TRACK_SELECTED, 0);
-            Track track = BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
-
-            String trackName = track.name;
-            String artistName = track.artists.get(0).name;
-
-            PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
-                    new Intent(getApplicationContext(), MainActivity.class),
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-            Notification notification = new NotificationCompat.Builder(getApplicationContext())
-                    .setOngoing(true)
-                    .setSmallIcon(R.drawable.ic_library_music_black_48dp)
-                    .setContentTitle(trackName)
-                    .setContentText(artistName)
-                    .setContentIntent(pi)
-                    .build();
-
-            mMediaPlayer = new MediaPlayer();
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mMediaPlayer.setOnPreparedListener(this);
-            mMediaPlayer.setOnCompletionListener(this);
-
-            try {
-                mMediaPlayer.setDataSource(track.preview_url);
-                mMediaPlayer.prepareAsync();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            startForeground(SERVICE_ID, notification);
+    /**
+     * Class used for the client Binder.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with IPC.
+     */
+    public class LocalBinder extends Binder {
+        public PlaybackService getService() {
+            // Return this instance of PlaybackService so clients can call public methods
+            return PlaybackService.this;
         }
-
-        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        mTrackListBundle = intent.getBundleExtra(PlayTrackActivityFragment.TRACK_LIST_BUNDLE);
+        mTrackSelected = intent.getIntExtra(PlayTrackActivityFragment.TRACK_SELECTED, 0);
+        return mBinder;
     }
 
     @Override
@@ -87,5 +63,37 @@ public class PlaybackService extends Service
     @Override
     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
         return false;
+    }
+
+    public void onPlayPauseAction() {
+        Track track = BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
+
+        String trackName = track.name;
+        String artistName = track.artists.get(0).name;
+
+        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
+                new Intent(getApplicationContext(), MainActivity.class),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification notification = new NotificationCompat.Builder(getApplicationContext())
+                .setOngoing(true)
+                .setSmallIcon(R.drawable.ic_library_music_black_48dp)
+                .setContentTitle(trackName)
+                .setContentText(artistName)
+                .setContentIntent(pi)
+                .build();
+
+        MediaPlayer mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMediaPlayer.setOnPreparedListener(this);
+        mMediaPlayer.setOnCompletionListener(this);
+
+        try {
+            mMediaPlayer.setDataSource(track.preview_url);
+            mMediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        startForeground(SERVICE_ID, notification);
     }
 }

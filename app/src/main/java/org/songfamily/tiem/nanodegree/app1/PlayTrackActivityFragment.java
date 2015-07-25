@@ -2,9 +2,12 @@ package org.songfamily.tiem.nanodegree.app1;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,7 +35,9 @@ public class PlayTrackActivityFragment extends DialogFragment
     public static final String TRACK_SELECTED = "trackSelect";
     public static final String TAG = "PlayTrackActivityFragment";
 
-    private MediaPlayer mMediaPlayer = null;
+    private PlaybackService mService;
+    private boolean mServiceBound = false;
+
     private Track mTrack;
     private Bundle mTrackListBundle;
     private int mTrackSelected;
@@ -94,11 +99,20 @@ public class PlayTrackActivityFragment extends DialogFragment
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onStart() {
+        super.onStart();
+        bindToService();
+    }
 
-        if (mMediaPlayer != null)
-            mMediaPlayer.release();
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // Unbind from the service
+        if (mServiceBound) {
+            getActivity().unbindService(mConnection);
+            mServiceBound = false;
+        }
     }
 
     @Override
@@ -123,6 +137,10 @@ public class PlayTrackActivityFragment extends DialogFragment
 
     @Override
     public void onClick(View view) {
+        if (!mServiceBound) {
+            bindToService();
+        }
+
         switch (view.getId()) {
             case R.id.pt_iv_play_pause_track:
                 playButtonClicked();
@@ -130,12 +148,37 @@ public class PlayTrackActivityFragment extends DialogFragment
         }
     }
 
-    // *** begin helper methods ***********************************************
+    // *** begin playback helper methods **************************************
+    // TODO: can this be inlined?
     private void playButtonClicked() {
+        mService.onPlayPauseAction();
+    }
+    // *** end playback helper methods ****************************************
+
+    // *** begin service helper methods ***************************************
+    private void bindToService() {
         Intent intent = new Intent(getActivity(), PlaybackService.class);
         intent.putExtra(TRACK_LIST_BUNDLE, mTrackListBundle);
         intent.putExtra(TRACK_SELECTED, mTrackSelected);
-        intent.setAction(PlaybackService.ACTION_PLAY_PAUSE);
-        getActivity().startService(intent);
+        getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            PlaybackService.LocalBinder binder = (PlaybackService.LocalBinder) service;
+            mService = binder.getService();
+            mServiceBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mServiceBound = false;
+        }
+    };
+    // *** end service helper methods *****************************************
 }
