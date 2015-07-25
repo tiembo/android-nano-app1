@@ -3,7 +3,6 @@ package org.songfamily.tiem.nanodegree.app1;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,32 +19,23 @@ import com.squareup.picasso.Picasso;
 
 import org.songfamily.tiem.nanodegree.app1.helpers.BundleHelper;
 import org.songfamily.tiem.nanodegree.app1.helpers.ImageHelper;
+import org.songfamily.tiem.nanodegree.app1.helpers.PlaybackService;
 import org.songfamily.tiem.nanodegree.app1.helpers.StringHelper;
-
-import java.io.IOException;
 
 import kaaes.spotify.webapi.android.models.Track;
 
 
 public class PlayTrackActivityFragment extends DialogFragment
-    implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
-        View.OnClickListener {
-
-    enum PlayButtonIcon {
-        PLAY,
-        PAUSE
-    }
+    implements View.OnClickListener {
 
     public static final String TRACK_LIST_BUNDLE = "trackListBundle";
     public static final String TRACK_SELECTED = "trackSelect";
     public static final String TAG = "PlayTrackActivityFragment";
 
     private MediaPlayer mMediaPlayer = null;
-    private boolean mIsTrackPrepared = false;
     private Track mTrack;
-
-    private ImageView mPlayPauseButton;
-    private TextView mTrackLength;
+    private Bundle mTrackListBundle;
+    private int mTrackSelected;
 
     public PlayTrackActivityFragment() {
     }
@@ -60,12 +50,11 @@ public class PlayTrackActivityFragment extends DialogFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_play_track, container, false);
-        mTrackLength = (TextView) view.findViewById(R.id.pt_tv_track_length);
 
         // fetch track information from arguments...
-        Bundle bundle = getArguments().getBundle(TRACK_LIST_BUNDLE);
-        int selectedTrack = getArguments().getInt(TRACK_SELECTED);
-        mTrack = BundleHelper.getTrackList(bundle).get(selectedTrack);
+        mTrackListBundle = getArguments().getBundle(TRACK_LIST_BUNDLE);
+        mTrackSelected = getArguments().getInt(TRACK_SELECTED);
+        mTrack = BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
 
         String albumImageUrl = ImageHelper.getImageUrl(mTrack.album.images);
         String albumName = mTrack.album.name;
@@ -87,11 +76,8 @@ public class PlayTrackActivityFragment extends DialogFragment
                 .into(ivAlbumImage);
 
         // set up play / pause button
-        mPlayPauseButton = (ImageView) view.findViewById(R.id.pt_iv_play_pause_track);
+        ImageView mPlayPauseButton = (ImageView) view.findViewById(R.id.pt_iv_play_pause_track);
         mPlayPauseButton.setOnClickListener(this);
-
-        // start playing track
-        playButtonClicked();
 
         return view;
     }
@@ -137,69 +123,19 @@ public class PlayTrackActivityFragment extends DialogFragment
 
     @Override
     public void onClick(View view) {
-        playButtonClicked();
+        switch (view.getId()) {
+            case R.id.pt_iv_play_pause_track:
+                playButtonClicked();
+                break;
+        }
     }
 
     // *** begin helper methods ***********************************************
     private void playButtonClicked() {
-        if (mMediaPlayer == null)
-            initMediaPlayer();
-
-        if (mMediaPlayer.isPlaying()) {
-            setPlayIcon(PlayButtonIcon.PLAY);
-            mMediaPlayer.pause();
-        } else {
-            playTrack();
-        }
+        Intent intent = new Intent(getActivity(), PlaybackService.class);
+        intent.putExtra(TRACK_LIST_BUNDLE, mTrackListBundle);
+        intent.putExtra(TRACK_SELECTED, mTrackSelected);
+        intent.setAction(PlaybackService.ACTION_PLAY_PAUSE);
+        getActivity().startService(intent);
     }
-
-    private void playTrack() {
-        if (mIsTrackPrepared) {
-            setPlayIcon(PlayButtonIcon.PAUSE);
-            mMediaPlayer.start();
-        } else {
-            try {
-                mMediaPlayer.setDataSource(mTrack.preview_url);
-                mMediaPlayer.prepareAsync();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void setPlayIcon(PlayButtonIcon icon) {
-        switch (icon) {
-            case PLAY:
-                mPlayPauseButton.setImageResource(android.R.drawable.ic_media_play);
-                break;
-            case PAUSE:
-                mPlayPauseButton.setImageResource(android.R.drawable.ic_media_pause);
-                break;
-        }
-    }
-    // *** end helper methods *************************************************
-
-    // *** begin media player helper methods and callbacks section ************
-    private void initMediaPlayer() {
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mMediaPlayer.setOnPreparedListener(this);
-        mMediaPlayer.setOnCompletionListener(this);
-    }
-
-    @Override
-    public void onPrepared(MediaPlayer mediaPlayer) {
-        mIsTrackPrepared = true;
-        mTrackLength.setText(StringHelper.getPlayTime(mediaPlayer.getDuration()));
-        playTrack();
-    }
-
-    @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {
-        mIsTrackPrepared = false;
-        setPlayIcon(PlayButtonIcon.PLAY);
-        mMediaPlayer.release();
-        mMediaPlayer = null;
-    }
-    // *** end media player helper methods and callbacks section **************
 }
