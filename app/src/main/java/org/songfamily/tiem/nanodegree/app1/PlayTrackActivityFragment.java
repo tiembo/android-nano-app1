@@ -80,9 +80,10 @@ public class PlayTrackActivityFragment extends DialogFragment
                 .load(albumImageUrl)
                 .into(ivAlbumImage);
 
-        // set up play / pause, next button
+        // set up play / pause, next, and previous button
         view.findViewById(R.id.pt_iv_play_pause_track).setOnClickListener(this);
         view.findViewById(R.id.pt_iv_next_track).setOnClickListener(this);
+        view.findViewById(R.id.pt_iv_previous_track).setOnClickListener(this);
 
         return view;
     }
@@ -148,6 +149,9 @@ public class PlayTrackActivityFragment extends DialogFragment
             case R.id.pt_iv_next_track:
                 nextButtonClicked();
                 break;
+            case R.id.pt_iv_previous_track:
+                previousButtonClicked();
+                break;
         }
     }
 
@@ -159,6 +163,10 @@ public class PlayTrackActivityFragment extends DialogFragment
 
     private void nextButtonClicked() {
         mService.onNextAction();
+    }
+
+    private void previousButtonClicked() {
+        mService.onPreviousAction();
     }
     // *** end playback helper methods ****************************************
 

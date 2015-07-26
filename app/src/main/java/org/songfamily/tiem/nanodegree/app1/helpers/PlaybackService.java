@@ -93,6 +93,21 @@ public class PlaybackService extends Service
         startTrack();
     }
 
+    // TODO: go to beginning of track if x seconds of the track has already been played
+    public void onPreviousAction() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
+            mMediaPlayer = null;
+        }
+
+        mTrackSelected--;
+        if (mTrackSelected < 0) {
+            mTrackSelected = BundleHelper.getTrackList(mTrackListBundle).size() - 1;
+        }
+
+        startTrack();
+    }
+
     private void startTrack() {
         Track track = BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
 
