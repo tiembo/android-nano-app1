@@ -38,9 +38,12 @@ public class PlayTrackActivityFragment extends DialogFragment
     private PlaybackService mService;
     private boolean mServiceBound = false;
 
-    private Track mTrack;
     private Bundle mTrackListBundle;
     private int mTrackSelected;
+    private TextView tvAlbumName;
+    private TextView tvArtistName;
+    private TextView tvTrackName;
+    private ImageView ivAlbumImage;
 
     public PlayTrackActivityFragment() {
     }
@@ -56,29 +59,15 @@ public class PlayTrackActivityFragment extends DialogFragment
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_play_track, container, false);
 
-        // fetch track information from arguments...
+        // fetch track information from arguments
         mTrackListBundle = getArguments().getBundle(TRACK_LIST_BUNDLE);
         mTrackSelected = getArguments().getInt(TRACK_SELECTED);
-        mTrack = BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
 
-        String albumImageUrl = ImageHelper.getImageUrl(mTrack.album.images);
-        String albumName = mTrack.album.name;
-        String artistName = mTrack.artists.get(0).name;
-        String trackName = mTrack.name;
-
-        // ...and write to views...
-        TextView tvAlbumName = (TextView) view.findViewById(R.id.pt_tv_album_name);
-        TextView tvArtistName = (TextView) view.findViewById(R.id.pt_tv_artist_name);
-        TextView tvTrackName = (TextView) view.findViewById(R.id.pt_tv_track_name);
-        tvAlbumName.setText(albumName);
-        tvArtistName.setText(artistName);
-        tvTrackName.setText(trackName);
-
-        //...and load album image
-        ImageView ivAlbumImage = (ImageView) view.findViewById(R.id.pt_iv_album_image);
-        Picasso.with(getActivity())
-                .load(albumImageUrl)
-                .into(ivAlbumImage);
+        tvAlbumName = (TextView) view.findViewById(R.id.pt_tv_album_name);
+        tvArtistName = (TextView) view.findViewById(R.id.pt_tv_artist_name);
+        tvTrackName = (TextView) view.findViewById(R.id.pt_tv_track_name);
+        ivAlbumImage = (ImageView) view.findViewById(R.id.pt_iv_album_image);
+        updateViewsWithTrackInfo();
 
         // set up play / pause, next, and previous button
         view.findViewById(R.id.pt_iv_play_pause_track).setOnClickListener(this);
@@ -127,7 +116,7 @@ public class PlayTrackActivityFragment extends DialogFragment
         if (item.getItemId() == R.id.action_share) {
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, StringHelper.getShareText(mTrack));
+            shareIntent.putExtra(Intent.EXTRA_TEXT, StringHelper.getShareText(getSelectedTrack()));
             shareIntent.setType("text/plain");
             startActivity(Intent.createChooser(shareIntent, getActivity().getString(R.string.share_window_title)));
             return true;
@@ -156,17 +145,20 @@ public class PlayTrackActivityFragment extends DialogFragment
     }
 
     // *** begin playback helper methods **************************************
-    // TODO: can these be inlined?
     private void playButtonClicked() {
         mService.onPlayPauseAction();
     }
 
     private void nextButtonClicked() {
         mService.onNextAction();
+        mTrackSelected = mService.getmTrackSelected();
+        updateViewsWithTrackInfo();
     }
 
     private void previousButtonClicked() {
         mService.onPreviousAction();
+        mTrackSelected = mService.getmTrackSelected();
+        updateViewsWithTrackInfo();
     }
     // *** end playback helper methods ****************************************
 
@@ -196,4 +188,25 @@ public class PlayTrackActivityFragment extends DialogFragment
         }
     };
     // *** end service helper methods *****************************************
+
+    // *** begin misc helper methods ******************************************
+    private void updateViewsWithTrackInfo() {
+        Track track = getSelectedTrack();
+        String albumImageUrl = ImageHelper.getImageUrl(track.album.images);
+        String albumName = track.album.name;
+        String artistName = track.artists.get(0).name;
+        String trackName = track.name;
+
+        tvAlbumName.setText(albumName);
+        tvArtistName.setText(artistName);
+        tvTrackName.setText(trackName);
+        Picasso.with(getActivity())
+                .load(albumImageUrl)
+                .into(ivAlbumImage);
+    }
+
+    private Track getSelectedTrack() {
+        return BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
+    }
+    // *** end misc helper methods ********************************************
 }

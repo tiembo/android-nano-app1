@@ -67,6 +67,10 @@ public class PlaybackService extends Service
         return false;
     }
 
+    public int getmTrackSelected() {
+        return mTrackSelected;
+    }
+
     public void onPlayPauseAction() {
         if (mMediaPlayer == null) {
             startTrack();
