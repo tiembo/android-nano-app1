@@ -3,7 +3,7 @@ fixes
 - navigate back from sharing - werid state, pressing pause crashes
 
 stage2
-- SERVICE
+- eventbus?
 - timers
 - progress bar when loading
 - seek bar (initially disabled, then enabled, then updated)
