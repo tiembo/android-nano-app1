@@ -28,6 +28,7 @@ public class PlaybackService extends Service
 
     private Bundle mTrackListBundle;
     private int mTrackSelected;
+    private MediaPlayer mMediaPlayer = null;
 
     // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
@@ -58,6 +59,7 @@ public class PlaybackService extends Service
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
         stopForeground(true);
+        mMediaPlayer = null;
     }
 
     @Override
@@ -66,34 +68,41 @@ public class PlaybackService extends Service
     }
 
     public void onPlayPauseAction() {
-        Track track = BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
+        if (mMediaPlayer == null) {
+            Track track = BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
 
-        String trackName = track.name;
-        String artistName = track.artists.get(0).name;
+            String trackName = track.name;
+            String artistName = track.artists.get(0).name;
 
-        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
-                new Intent(getApplicationContext(), MainActivity.class),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        Notification notification = new NotificationCompat.Builder(getApplicationContext())
-                .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_library_music_black_48dp)
-                .setContentTitle(trackName)
-                .setContentText(artistName)
-                .setContentIntent(pi)
-                .build();
+            PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
+                    new Intent(getApplicationContext(), MainActivity.class),
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            Notification notification = new NotificationCompat.Builder(getApplicationContext())
+                    .setOngoing(true)
+                    .setSmallIcon(R.drawable.ic_library_music_black_48dp)
+                    .setContentTitle(trackName)
+                    .setContentText(artistName)
+                    .setContentIntent(pi)
+                    .build();
 
-        MediaPlayer mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mMediaPlayer.setOnPreparedListener(this);
-        mMediaPlayer.setOnCompletionListener(this);
+            mMediaPlayer = new MediaPlayer();
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mMediaPlayer.setOnPreparedListener(this);
+            mMediaPlayer.setOnCompletionListener(this);
 
-        try {
-            mMediaPlayer.setDataSource(track.preview_url);
-            mMediaPlayer.prepareAsync();
-        } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                mMediaPlayer.setDataSource(track.preview_url);
+                mMediaPlayer.prepareAsync();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            startForeground(SERVICE_ID, notification);
+        } else {
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.pause();
+            } else {
+                mMediaPlayer.start();
+            }
         }
-
-        startForeground(SERVICE_ID, notification);
     }
 }
