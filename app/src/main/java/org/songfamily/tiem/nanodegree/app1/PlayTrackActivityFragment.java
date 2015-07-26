@@ -80,9 +80,9 @@ public class PlayTrackActivityFragment extends DialogFragment
                 .load(albumImageUrl)
                 .into(ivAlbumImage);
 
-        // set up play / pause button
-        ImageView mPlayPauseButton = (ImageView) view.findViewById(R.id.pt_iv_play_pause_track);
-        mPlayPauseButton.setOnClickListener(this);
+        // set up play / pause, next button
+        view.findViewById(R.id.pt_iv_play_pause_track).setOnClickListener(this);
+        view.findViewById(R.id.pt_iv_next_track).setOnClickListener(this);
 
         return view;
     }
@@ -145,13 +145,20 @@ public class PlayTrackActivityFragment extends DialogFragment
             case R.id.pt_iv_play_pause_track:
                 playButtonClicked();
                 break;
+            case R.id.pt_iv_next_track:
+                nextButtonClicked();
+                break;
         }
     }
 
     // *** begin playback helper methods **************************************
-    // TODO: can this be inlined?
+    // TODO: can these be inlined?
     private void playButtonClicked() {
         mService.onPlayPauseAction();
+    }
+
+    private void nextButtonClicked() {
+        mService.onNextAction();
     }
     // *** end playback helper methods ****************************************
 

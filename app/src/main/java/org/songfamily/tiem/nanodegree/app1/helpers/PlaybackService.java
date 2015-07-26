@@ -69,34 +69,7 @@ public class PlaybackService extends Service
 
     public void onPlayPauseAction() {
         if (mMediaPlayer == null) {
-            Track track = BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
-
-            String trackName = track.name;
-            String artistName = track.artists.get(0).name;
-
-            PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
-                    new Intent(getApplicationContext(), MainActivity.class),
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-            Notification notification = new NotificationCompat.Builder(getApplicationContext())
-                    .setOngoing(true)
-                    .setSmallIcon(R.drawable.ic_library_music_black_48dp)
-                    .setContentTitle(trackName)
-                    .setContentText(artistName)
-                    .setContentIntent(pi)
-                    .build();
-
-            mMediaPlayer = new MediaPlayer();
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mMediaPlayer.setOnPreparedListener(this);
-            mMediaPlayer.setOnCompletionListener(this);
-
-            try {
-                mMediaPlayer.setDataSource(track.preview_url);
-                mMediaPlayer.prepareAsync();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            startForeground(SERVICE_ID, notification);
+            startTrack();
         } else {
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
@@ -104,5 +77,53 @@ public class PlaybackService extends Service
                 mMediaPlayer.start();
             }
         }
+    }
+
+    public void onNextAction() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
+            mMediaPlayer = null;
+        }
+
+        mTrackSelected++;
+        if (mTrackSelected > BundleHelper.getTrackList(mTrackListBundle).size() - 1) {
+            mTrackSelected = 0;
+        }
+
+        startTrack();
+    }
+
+    private void startTrack() {
+        Track track = BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
+
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMediaPlayer.setOnPreparedListener(this);
+        mMediaPlayer.setOnCompletionListener(this);
+
+        try {
+            mMediaPlayer.setDataSource(track.preview_url);
+            mMediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String trackName = track.name;
+        String artistName = track.artists.get(0).name;
+        Notification notification = buildNotification(trackName, artistName);
+        startForeground(SERVICE_ID, notification);
+    }
+
+    private Notification buildNotification(String trackName, String artistName) {
+        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
+                new Intent(getApplicationContext(), MainActivity.class),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        return new NotificationCompat.Builder(getApplicationContext())
+                .setOngoing(true)
+                .setSmallIcon(R.drawable.ic_library_music_black_48dp)
+                .setContentTitle(trackName)
+                .setContentText(artistName)
+                .setContentIntent(pi)
+                .build();
     }
 }
