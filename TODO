@@ -2,19 +2,21 @@ fixes
 - flip when empty startup fails on both tablet and phone
 - navigate back from sharing - werid state, pressing pause crashes
 
-stage2
+stage 2 basic
 - eventbus?
-- timers
-- progress bar when loading
-- seek bar (initially disabled, then enabled, then updated)
-- implement next / back
+  - timers
+  - progress bar when loading
+  - seek bar (initially disabled, then enabled, then updated)
+
+stage 2 exceeds
+- settings
+  - country code
+  - ongoing
+
+stage 2 cleanups / tweaks
+- check TODOs!
 - remove static album image size
 - handle null album image url
-
-stage 2 cleanups
-- check TODOs!
-
-stage 2 tweaks
 - comments and test for StringHelper
 - fade music in and out
 - extract out artist name helper (instead of get(0) nonsense), or just pass as intent extra
