@@ -8,6 +8,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -31,6 +32,7 @@ public class PlaybackService extends Service
     private Bundle mTrackListBundle;
     private int mTrackSelected;
     private MediaPlayer mMediaPlayer = null;
+    final Handler mHandler = new Handler();
 
     // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
@@ -57,12 +59,15 @@ public class PlaybackService extends Service
     public void onPrepared(MediaPlayer mediaPlayer) {
         mediaPlayer.start();
         broadcastTrackPrepared();
+        startElapsedTimeRunnable();
     }
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
         stopForeground(true);
         mMediaPlayer = null;
+        mHandler.removeCallbacks(elapsedTimeRunnable);
+        broadcastElapsedTime(0);
     }
 
     @Override
@@ -152,18 +157,49 @@ public class PlaybackService extends Service
     // *** begin broadcast methods ********************************************
     static final public String SERVICE_FILTER = "PlaybackServiceFilter";
     static final public String SERVICE_MESSAGE = "PlaybackServiceMessage";
+    static final public String SERVICE_DATA = "PlaybackServiceData";
     static final public String TRACK_PREPARED = "TrackPrepared";
+    static final public String ELAPSED_TIME = "ElapsedTime";
 
     private void broadcastTrackPrepared() {
-        Intent intent = new Intent(SERVICE_FILTER);
-        intent.putExtra(SERVICE_MESSAGE, TRACK_PREPARED);
+        broadcastIntent(getBroadcastIntent().putExtra(SERVICE_MESSAGE, TRACK_PREPARED));
+    }
+
+    private void broadcastElapsedTime(int time) {
+        broadcastIntent(getBroadcastIntent()
+                .putExtra(SERVICE_MESSAGE, ELAPSED_TIME)
+                .putExtra(SERVICE_DATA, getTime(time)));
+    }
+
+    private Intent getBroadcastIntent() {
+        return new Intent(SERVICE_FILTER);
+    }
+
+    private void broadcastIntent(Intent intent) {
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
     }
     // *** end broadcast methods **********************************************
 
+    // *** begin handler and runnables methods ********************************
+    private void startElapsedTimeRunnable() {
+        mHandler.post(elapsedTimeRunnable);
+    }
+
+    Runnable elapsedTimeRunnable = new Runnable() {
+        @Override
+        public void run() {
+            broadcastElapsedTime(mMediaPlayer.getCurrentPosition());
+            mHandler.postDelayed(this, 500);
+        }
+    };
+    // *** end handler and runnables methods **********************************
+
     // *** begin helper methods ***********************************************
     public String getTrackLength() {
-        int duration = mMediaPlayer.getDuration();
+        return getTime(mMediaPlayer.getDuration());
+    }
+
+    private String getTime(int duration) {
         long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
         long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.MINUTES.toSeconds(minutes));
 

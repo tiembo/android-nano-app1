@@ -48,6 +48,7 @@ public class PlayTrackActivityFragment extends DialogFragment
     private TextView tvArtistName;
     private TextView tvTrackName;
     private ImageView ivAlbumImage;
+    private TextView tvElapsedTime;
     private TextView tvTrackLength;
 
     public PlayTrackActivityFragment() {
@@ -73,6 +74,7 @@ public class PlayTrackActivityFragment extends DialogFragment
         tvArtistName = (TextView) view.findViewById(R.id.pt_tv_artist_name);
         tvTrackName = (TextView) view.findViewById(R.id.pt_tv_track_name);
         ivAlbumImage = (ImageView) view.findViewById(R.id.pt_iv_album_image);
+        tvElapsedTime = (TextView) view.findViewById(R.id.pt_tv_elapsed_time);
         tvTrackLength = (TextView) view.findViewById(R.id.pt_tv_track_length);
         updateViewsWithTrackInfo();
 
@@ -208,6 +210,9 @@ public class PlayTrackActivityFragment extends DialogFragment
                 switch (message) {
                     case (PlaybackService.TRACK_PREPARED):
                         updateViewsWhenTrackPrepared();
+                        break;
+                    case (PlaybackService.ELAPSED_TIME):
+                        tvElapsedTime.setText(intent.getStringExtra(PlaybackService.SERVICE_DATA));
                         break;
                 }
             }
