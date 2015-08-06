@@ -10,12 +10,14 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 
 import org.songfamily.tiem.nanodegree.app1.MainActivity;
 import org.songfamily.tiem.nanodegree.app1.PlayTrackActivityFragment;
 import org.songfamily.tiem.nanodegree.app1.R;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import kaaes.spotify.webapi.android.models.Track;
 
@@ -54,6 +56,7 @@ public class PlaybackService extends Service
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
         mediaPlayer.start();
+        broadcastTrackPrepared();
     }
 
     @Override
@@ -145,4 +148,26 @@ public class PlaybackService extends Service
                 .setContentIntent(pi)
                 .build();
     }
+
+    // *** begin broadcast methods ********************************************
+    static final public String SERVICE_FILTER = "PlaybackServiceFilter";
+    static final public String SERVICE_MESSAGE = "PlaybackServiceMessage";
+    static final public String TRACK_PREPARED = "TrackPrepared";
+
+    private void broadcastTrackPrepared() {
+        Intent intent = new Intent(SERVICE_FILTER);
+        intent.putExtra(SERVICE_MESSAGE, TRACK_PREPARED);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+    }
+    // *** end broadcast methods **********************************************
+
+    // *** begin helper methods ***********************************************
+    public String getTrackLength() {
+        int duration = mMediaPlayer.getDuration();
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
+        long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.MINUTES.toSeconds(minutes));
+
+        return String.format("%02d:%02d", minutes, seconds);
+    }
+    // *** end helper methods *************************************************
 }

@@ -2,12 +2,15 @@ package org.songfamily.tiem.nanodegree.app1;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,6 +40,7 @@ public class PlayTrackActivityFragment extends DialogFragment
 
     private PlaybackService mService;
     private boolean mServiceBound = false;
+    private BroadcastReceiver mBroadcastReceiver;
 
     private Bundle mTrackListBundle;
     private int mTrackSelected;
@@ -44,6 +48,7 @@ public class PlayTrackActivityFragment extends DialogFragment
     private TextView tvArtistName;
     private TextView tvTrackName;
     private ImageView ivAlbumImage;
+    private TextView tvTrackLength;
 
     public PlayTrackActivityFragment() {
     }
@@ -52,6 +57,7 @@ public class PlayTrackActivityFragment extends DialogFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        mBroadcastReceiver = initBroadcastReceiver();
     }
 
     @Override
@@ -67,6 +73,7 @@ public class PlayTrackActivityFragment extends DialogFragment
         tvArtistName = (TextView) view.findViewById(R.id.pt_tv_artist_name);
         tvTrackName = (TextView) view.findViewById(R.id.pt_tv_track_name);
         ivAlbumImage = (ImageView) view.findViewById(R.id.pt_iv_album_image);
+        tvTrackLength = (TextView) view.findViewById(R.id.pt_tv_track_length);
         updateViewsWithTrackInfo();
 
         // set up play / pause, next, and previous button
@@ -92,6 +99,8 @@ public class PlayTrackActivityFragment extends DialogFragment
     public void onStart() {
         super.onStart();
         bindToService();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver,
+                new IntentFilter(PlaybackService.SERVICE_FILTER));
     }
 
     @Override
@@ -103,6 +112,7 @@ public class PlayTrackActivityFragment extends DialogFragment
             getActivity().unbindService(mConnection);
             mServiceBound = false;
         }
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
     }
 
     @Override
@@ -187,6 +197,22 @@ public class PlayTrackActivityFragment extends DialogFragment
             mServiceBound = false;
         }
     };
+
+    private BroadcastReceiver initBroadcastReceiver() {
+        return new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String message = intent.getStringExtra(PlaybackService.SERVICE_MESSAGE);
+
+                switch (message) {
+                    case (PlaybackService.TRACK_PREPARED):
+                        updateViewsWhenTrackPrepared();
+                        break;
+                }
+            }
+        };
+    }
     // *** end service helper methods *****************************************
 
     // *** begin misc helper methods ******************************************
@@ -207,6 +233,10 @@ public class PlayTrackActivityFragment extends DialogFragment
 
     private Track getSelectedTrack() {
         return BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
+    }
+
+    private void updateViewsWhenTrackPrepared() {
+        tvTrackLength.setText(mService.getTrackLength());
     }
     // *** end misc helper methods ********************************************
 }
