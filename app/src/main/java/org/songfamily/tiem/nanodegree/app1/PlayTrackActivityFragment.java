@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -27,6 +28,8 @@ import org.songfamily.tiem.nanodegree.app1.helpers.BundleHelper;
 import org.songfamily.tiem.nanodegree.app1.helpers.ImageHelper;
 import org.songfamily.tiem.nanodegree.app1.helpers.PlaybackService;
 import org.songfamily.tiem.nanodegree.app1.helpers.StringHelper;
+
+import java.util.concurrent.TimeUnit;
 
 import kaaes.spotify.webapi.android.models.Track;
 
@@ -48,6 +51,7 @@ public class PlayTrackActivityFragment extends DialogFragment
     private TextView tvArtistName;
     private TextView tvTrackName;
     private ImageView ivAlbumImage;
+    private SeekBar seekBar;
     private TextView tvElapsedTime;
     private TextView tvTrackLength;
 
@@ -74,6 +78,7 @@ public class PlayTrackActivityFragment extends DialogFragment
         tvArtistName = (TextView) view.findViewById(R.id.pt_tv_artist_name);
         tvTrackName = (TextView) view.findViewById(R.id.pt_tv_track_name);
         ivAlbumImage = (ImageView) view.findViewById(R.id.pt_iv_album_image);
+        seekBar = (SeekBar) view.findViewById(R.id.pt_seek_bar);
         tvElapsedTime = (TextView) view.findViewById(R.id.pt_tv_elapsed_time);
         tvTrackLength = (TextView) view.findViewById(R.id.pt_tv_track_length);
         updateViewsWithTrackInfo();
@@ -209,10 +214,14 @@ public class PlayTrackActivityFragment extends DialogFragment
 
                 switch (message) {
                     case (PlaybackService.TRACK_PREPARED):
-                        updateViewsWhenTrackPrepared();
+                        int trackLength = mService.getTrackLength();
+                        seekBar.setMax(trackLength);
+                        tvTrackLength.setText(getTime(trackLength));
                         break;
                     case (PlaybackService.ELAPSED_TIME):
-                        tvElapsedTime.setText(intent.getStringExtra(PlaybackService.SERVICE_DATA));
+                        int elapsedTime = intent.getIntExtra(PlaybackService.SERVICE_DATA, 0);
+                        seekBar.setProgress(elapsedTime);
+                        tvElapsedTime.setText(getTime(elapsedTime));
                         break;
                 }
             }
@@ -240,8 +249,10 @@ public class PlayTrackActivityFragment extends DialogFragment
         return BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
     }
 
-    private void updateViewsWhenTrackPrepared() {
-        tvTrackLength.setText(mService.getTrackLength());
+    private String getTime(int duration) {
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
+        long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.MINUTES.toSeconds(minutes));
+        return String.format("%02d:%02d", minutes, seconds);
     }
     // *** end misc helper methods ********************************************
 }

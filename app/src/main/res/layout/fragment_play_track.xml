@@ -34,6 +34,7 @@
         tools:text="Track name"/>
 
     <SeekBar
+        android:id="@+id/pt_seek_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

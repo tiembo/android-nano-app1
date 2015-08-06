@@ -168,7 +168,7 @@ public class PlaybackService extends Service
     private void broadcastElapsedTime(int time) {
         broadcastIntent(getBroadcastIntent()
                 .putExtra(SERVICE_MESSAGE, ELAPSED_TIME)
-                .putExtra(SERVICE_DATA, getTime(time)));
+                .putExtra(SERVICE_DATA, time));
     }
 
     private Intent getBroadcastIntent() {
@@ -189,21 +189,14 @@ public class PlaybackService extends Service
         @Override
         public void run() {
             broadcastElapsedTime(mMediaPlayer.getCurrentPosition());
-            mHandler.postDelayed(this, 500);
+            mHandler.postDelayed(this, 100);
         }
     };
     // *** end handler and runnables methods **********************************
 
     // *** begin helper methods ***********************************************
-    public String getTrackLength() {
-        return getTime(mMediaPlayer.getDuration());
-    }
-
-    private String getTime(int duration) {
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
-        long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.MINUTES.toSeconds(minutes));
-
-        return String.format("%02d:%02d", minutes, seconds);
+    public int getTrackLength() {
+        return mMediaPlayer.getDuration();
     }
     // *** end helper methods *************************************************
 }
