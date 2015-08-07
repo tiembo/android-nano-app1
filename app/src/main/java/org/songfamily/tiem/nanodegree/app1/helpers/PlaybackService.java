@@ -18,7 +18,6 @@ import org.songfamily.tiem.nanodegree.app1.PlayTrackActivityFragment;
 import org.songfamily.tiem.nanodegree.app1.R;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import kaaes.spotify.webapi.android.models.Track;
 
@@ -67,7 +66,7 @@ public class PlaybackService extends Service
         stopForeground(true);
         mMediaPlayer = null;
         mHandler.removeCallbacks(elapsedTimeRunnable);
-        broadcastElapsedTime(0);
+        broadcastTrackCompleted();
     }
 
     @Override
@@ -155,14 +154,20 @@ public class PlaybackService extends Service
     }
 
     // *** begin broadcast methods ********************************************
+    // TODO: replace these with enum?
     static final public String SERVICE_FILTER = "PlaybackServiceFilter";
     static final public String SERVICE_MESSAGE = "PlaybackServiceMessage";
     static final public String SERVICE_DATA = "PlaybackServiceData";
     static final public String TRACK_PREPARED = "TrackPrepared";
+    static final public String TRACK_COMPLETED = "TrackCompleted";
     static final public String ELAPSED_TIME = "ElapsedTime";
 
     private void broadcastTrackPrepared() {
         broadcastIntent(getBroadcastIntent().putExtra(SERVICE_MESSAGE, TRACK_PREPARED));
+    }
+
+    private void broadcastTrackCompleted() {
+        broadcastIntent(getBroadcastIntent().putExtra(SERVICE_MESSAGE, TRACK_COMPLETED));
     }
 
     private void broadcastElapsedTime(int time) {
@@ -197,6 +202,12 @@ public class PlaybackService extends Service
     // *** begin helper methods ***********************************************
     public int getTrackLength() {
         return mMediaPlayer.getDuration();
+    }
+
+    public void setProgress(int msec) {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.seekTo(msec);
+        }
     }
     // *** end helper methods *************************************************
 }

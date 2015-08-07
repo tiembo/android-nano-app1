@@ -35,7 +35,7 @@ import kaaes.spotify.webapi.android.models.Track;
 
 
 public class PlayTrackActivityFragment extends DialogFragment
-    implements View.OnClickListener {
+    implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     public static final String TRACK_LIST_BUNDLE = "trackListBundle";
     public static final String TRACK_SELECTED = "trackSelect";
@@ -83,10 +83,12 @@ public class PlayTrackActivityFragment extends DialogFragment
         tvTrackLength = (TextView) view.findViewById(R.id.pt_tv_track_length);
         updateViewsWithTrackInfo();
 
-        // set up play / pause, next, and previous button
+        // set up play / pause, next, previous buttons and seek bar
         view.findViewById(R.id.pt_iv_play_pause_track).setOnClickListener(this);
         view.findViewById(R.id.pt_iv_next_track).setOnClickListener(this);
         view.findViewById(R.id.pt_iv_previous_track).setOnClickListener(this);
+        seekBar.setEnabled(false);
+        seekBar.setOnSeekBarChangeListener(this);
 
         return view;
     }
@@ -161,6 +163,20 @@ public class PlayTrackActivityFragment extends DialogFragment
         }
     }
 
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        mService.setProgress(progress);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        // no-op
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        // no-op
+    }
     // *** begin playback helper methods **************************************
     private void playButtonClicked() {
         mService.onPlayPauseAction();
@@ -215,8 +231,14 @@ public class PlayTrackActivityFragment extends DialogFragment
                 switch (message) {
                     case (PlaybackService.TRACK_PREPARED):
                         int trackLength = mService.getTrackLength();
+                        seekBar.setEnabled(true);
                         seekBar.setMax(trackLength);
                         tvTrackLength.setText(getTime(trackLength));
+                        break;
+                    case (PlaybackService.TRACK_COMPLETED):
+                        seekBar.setProgress(0);
+                        seekBar.setEnabled(false);
+                        tvElapsedTime.setText(getTime(0));
                         break;
                     case (PlaybackService.ELAPSED_TIME):
                         int elapsedTime = intent.getIntExtra(PlaybackService.SERVICE_DATA, 0);

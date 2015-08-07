@@ -4,6 +4,7 @@ fixes
 - share intent shows for tablet layout
 . navigate back from sharing - werid state, pressing pause crashes
 . search for known artist, then search for error artist
+. play track extra share menu on rotate (phone only?)
 
 stage 2 basic
 - eventbus?
