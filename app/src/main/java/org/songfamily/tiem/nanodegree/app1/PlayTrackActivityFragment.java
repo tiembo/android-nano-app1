@@ -55,9 +55,9 @@ public class PlayTrackActivityFragment extends DialogFragment
     private SeekBar seekBar;
     private TextView tvElapsedTime;
     private TextView tvTrackLength;
-    private View ivPrev;
-    private View ivPlayPause;
-    private View ivNext;
+    private ImageView ivPrev;
+    private ImageView ivPlayPause;
+    private ImageView ivNext;
 
     public PlayTrackActivityFragment() {
     }
@@ -86,9 +86,9 @@ public class PlayTrackActivityFragment extends DialogFragment
         seekBar = (SeekBar) view.findViewById(R.id.pt_seek_bar);
         tvElapsedTime = (TextView) view.findViewById(R.id.pt_tv_elapsed_time);
         tvTrackLength = (TextView) view.findViewById(R.id.pt_tv_track_length);
-        ivPrev = view.findViewById(R.id.pt_iv_previous_track);
-        ivPlayPause = view.findViewById(R.id.pt_iv_play_pause_track);
-        ivNext = view.findViewById(R.id.pt_iv_next_track);
+        ivPrev = (ImageView) view.findViewById(R.id.pt_iv_previous_track);
+        ivPlayPause = (ImageView) view.findViewById(R.id.pt_iv_play_pause_track);
+        ivNext = (ImageView) view.findViewById(R.id.pt_iv_next_track);
         updateViewsWithTrackInfo();
 
         // set up play / pause, next, previous buttons and seek bar
@@ -249,6 +249,12 @@ public class PlayTrackActivityFragment extends DialogFragment
                         seekBar.setEnabled(true);
                         seekBar.setMax(trackLength);
                         tvTrackLength.setText(getTime(trackLength));
+                        break;
+                    case (PlaybackService.TRACK_PLAYING):
+                        ivPlayPause.setImageResource(android.R.drawable.ic_media_pause);
+                        break;
+                    case (PlaybackService.TRACK_PAUSED):
+                        ivPlayPause.setImageResource(android.R.drawable.ic_media_play);
                         break;
                     case (PlaybackService.TRACK_COMPLETED):
                         seekBar.setProgress(0);

@@ -56,7 +56,7 @@ public class PlaybackService extends Service
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
-        mediaPlayer.start();
+        playTrack();
         broadcastTrackPrepared();
         startElapsedTimeRunnable();
     }
@@ -83,9 +83,9 @@ public class PlaybackService extends Service
             prepareTrack();
         } else {
             if (mMediaPlayer.isPlaying()) {
-                mMediaPlayer.pause();
+                pauseTrack();
             } else {
-                mMediaPlayer.start();
+                playTrack();
             }
         }
     }
@@ -141,6 +141,16 @@ public class PlaybackService extends Service
         startForeground(SERVICE_ID, notification);
     }
 
+    private void playTrack() {
+        mMediaPlayer.start();
+        broadcastTrackPlaying();
+    }
+
+    private void pauseTrack() {
+        mMediaPlayer.pause();
+        broadcastTrackPaused();
+    }
+
     private Notification buildNotification(String trackName, String artistName) {
         PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
                 new Intent(getApplicationContext(), MainActivity.class),
@@ -161,6 +171,8 @@ public class PlaybackService extends Service
     static final public String SERVICE_DATA = "PlaybackServiceData";
     static final public String TRACK_PREPARING = "TrackPreparing";
     static final public String TRACK_PREPARED = "TrackPrepared";
+    static final public String TRACK_PLAYING = "TrackPlaying";
+    static final public String TRACK_PAUSED = "TrackPaused";
     static final public String TRACK_COMPLETED = "TrackCompleted";
     static final public String ELAPSED_TIME = "ElapsedTime";
 
@@ -170,6 +182,14 @@ public class PlaybackService extends Service
 
     private void broadcastTrackPrepared() {
         broadcastIntent(getBroadcastIntent().putExtra(SERVICE_MESSAGE, TRACK_PREPARED));
+    }
+
+    private void broadcastTrackPlaying() {
+        broadcastIntent(getBroadcastIntent().putExtra(SERVICE_MESSAGE, TRACK_PLAYING));
+    }
+
+    private void broadcastTrackPaused() {
+        broadcastIntent(getBroadcastIntent().putExtra(SERVICE_MESSAGE, TRACK_PAUSED));
     }
 
     private void broadcastTrackCompleted() {

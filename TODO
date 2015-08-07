@@ -3,9 +3,10 @@ fixes
 - flip when empty startup fails on both tablet and phone
 - share intent shows for tablet layout
 . navigate back from sharing - werid state, pressing pause crashes
-. search for known artist, then search for error artist
+. search for known artist, then search for error artist (check if tablet only?)
 . play track extra share menu on rotate (phone only?)
 . rotate removes part of UI when playing
+. play/pause button state kept when going to prev / next track
 
 stage 2 exceeds
 - settings
