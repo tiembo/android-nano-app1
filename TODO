@@ -1,17 +1,11 @@
 fixes
-! next/back broken
 ! pressing back out of play view seems to cancel service?
 - flip when empty startup fails on both tablet and phone
 - share intent shows for tablet layout
 . navigate back from sharing - werid state, pressing pause crashes
 . search for known artist, then search for error artist
 . play track extra share menu on rotate (phone only?)
-
-stage 2 basic
-- eventbus?
-  - timers
-  - progress bar when loading
-  - seek bar (initially disabled, then enabled, then updated)
+. rotate removes part of UI when playing
 
 stage 2 exceeds
 - settings

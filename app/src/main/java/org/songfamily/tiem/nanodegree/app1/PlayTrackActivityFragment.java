@@ -51,9 +51,13 @@ public class PlayTrackActivityFragment extends DialogFragment
     private TextView tvArtistName;
     private TextView tvTrackName;
     private ImageView ivAlbumImage;
+    private View progressBar;
     private SeekBar seekBar;
     private TextView tvElapsedTime;
     private TextView tvTrackLength;
+    private View ivPrev;
+    private View ivPlayPause;
+    private View ivNext;
 
     public PlayTrackActivityFragment() {
     }
@@ -78,9 +82,13 @@ public class PlayTrackActivityFragment extends DialogFragment
         tvArtistName = (TextView) view.findViewById(R.id.pt_tv_artist_name);
         tvTrackName = (TextView) view.findViewById(R.id.pt_tv_track_name);
         ivAlbumImage = (ImageView) view.findViewById(R.id.pt_iv_album_image);
+        progressBar = view.findViewById(R.id.pt_progress_bar);
         seekBar = (SeekBar) view.findViewById(R.id.pt_seek_bar);
         tvElapsedTime = (TextView) view.findViewById(R.id.pt_tv_elapsed_time);
         tvTrackLength = (TextView) view.findViewById(R.id.pt_tv_track_length);
+        ivPrev = view.findViewById(R.id.pt_iv_previous_track);
+        ivPlayPause = view.findViewById(R.id.pt_iv_play_pause_track);
+        ivNext = view.findViewById(R.id.pt_iv_next_track);
         updateViewsWithTrackInfo();
 
         // set up play / pause, next, previous buttons and seek bar
@@ -150,6 +158,7 @@ public class PlayTrackActivityFragment extends DialogFragment
             bindToService();
         }
 
+        // TODO: inline these?
         switch (view.getId()) {
             case R.id.pt_iv_play_pause_track:
                 playButtonClicked();
@@ -229,7 +238,13 @@ public class PlayTrackActivityFragment extends DialogFragment
                 String message = intent.getStringExtra(PlaybackService.SERVICE_MESSAGE);
 
                 switch (message) {
+                    case (PlaybackService.TRACK_PREPARING):
+                        setViewsClickability(false);
+                        progressBar.setVisibility(View.VISIBLE);
+                        break;
                     case (PlaybackService.TRACK_PREPARED):
+                        setViewsClickability(true);
+                        progressBar.setVisibility(View.GONE);
                         int trackLength = mService.getTrackLength();
                         seekBar.setEnabled(true);
                         seekBar.setMax(trackLength);
@@ -252,6 +267,12 @@ public class PlayTrackActivityFragment extends DialogFragment
     // *** end service helper methods *****************************************
 
     // *** begin misc helper methods ******************************************
+    private void setViewsClickability(boolean clickable) {
+        ivPrev.setClickable(clickable);
+        ivPlayPause.setClickable(clickable);
+        ivNext.setClickable(clickable);
+    }
+
     private void updateViewsWithTrackInfo() {
         Track track = getSelectedTrack();
         String albumImageUrl = ImageHelper.getImageUrl(track.album.images);

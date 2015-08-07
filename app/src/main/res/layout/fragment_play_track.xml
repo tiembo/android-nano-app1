@@ -22,11 +22,26 @@
         tools:text="Album name"/>
 
     <!-- temporarily setting static dimensions for layout tweaking -->
-    <ImageView
-        android:id="@+id/pt_iv_album_image"
+    <RelativeLayout
         android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:contentDescription="@string/album_artwork" />
+        android:layout_height="200dp">
+
+        <ImageView
+            android:id="@+id/pt_iv_album_image"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:contentDescription="@string/album_artwork" />
+
+        <ProgressBar
+            android:id="@+id/pt_progress_bar"
+            style="@android:style/Widget.DeviceDefault.ProgressBar.Large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/pt_tv_track_name"

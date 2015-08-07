@@ -80,7 +80,7 @@ public class PlaybackService extends Service
 
     public void onPlayPauseAction() {
         if (mMediaPlayer == null) {
-            startTrack();
+            prepareTrack();
         } else {
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
@@ -101,7 +101,7 @@ public class PlaybackService extends Service
             mTrackSelected = 0;
         }
 
-        startTrack();
+        prepareTrack();
     }
 
     // TODO: go to beginning of track if x seconds of the track has already been played
@@ -116,10 +116,11 @@ public class PlaybackService extends Service
             mTrackSelected = BundleHelper.getTrackList(mTrackListBundle).size() - 1;
         }
 
-        startTrack();
+        prepareTrack();
     }
 
-    private void startTrack() {
+    private void prepareTrack() {
+        broadcastTrackPreparing();
         Track track = BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
 
         mMediaPlayer = new MediaPlayer();
@@ -158,9 +159,14 @@ public class PlaybackService extends Service
     static final public String SERVICE_FILTER = "PlaybackServiceFilter";
     static final public String SERVICE_MESSAGE = "PlaybackServiceMessage";
     static final public String SERVICE_DATA = "PlaybackServiceData";
+    static final public String TRACK_PREPARING = "TrackPreparing";
     static final public String TRACK_PREPARED = "TrackPrepared";
     static final public String TRACK_COMPLETED = "TrackCompleted";
     static final public String ELAPSED_TIME = "ElapsedTime";
+
+    private void broadcastTrackPreparing() {
+        broadcastIntent(getBroadcastIntent().putExtra(SERVICE_MESSAGE, TRACK_PREPARING));
+    }
 
     private void broadcastTrackPrepared() {
         broadcastIntent(getBroadcastIntent().putExtra(SERVICE_MESSAGE, TRACK_PREPARED));
