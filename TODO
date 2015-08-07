@@ -1,4 +1,5 @@
 fixes
+! next/back broken
 ! pressing back out of play view seems to cancel service?
 - flip when empty startup fails on both tablet and phone
 - share intent shows for tablet layout

@@ -165,7 +165,7 @@ public class PlayTrackActivityFragment extends DialogFragment
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        mService.setProgress(progress);
+        // no-op
     }
 
     @Override
@@ -175,7 +175,7 @@ public class PlayTrackActivityFragment extends DialogFragment
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        // no-op
+        mService.setProgress(seekBar.getProgress());
     }
     // *** begin playback helper methods **************************************
     private void playButtonClicked() {
