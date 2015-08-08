@@ -4,7 +4,6 @@ fixes
 - share intent shows for tablet layout
 . navigate back from sharing - werid state, pressing pause crashes
 . search for known artist, then search for error artist (check if tablet only?)
-. play track extra share menu on rotate (phone only?)
 . play/pause button state kept when going to prev / next track
 . 00:00 shows when selecting different track while current one is playing
 

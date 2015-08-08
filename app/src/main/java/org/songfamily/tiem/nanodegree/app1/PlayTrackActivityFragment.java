@@ -134,6 +134,7 @@ public class PlayTrackActivityFragment extends DialogFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear(); // to prevent duplicates on device rotation
         inflater.inflate(R.menu.menu_share, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
