@@ -23,7 +23,6 @@ stage 2 cleanups / tweaks
 . fade music in and out
 
 stage 2 tracks tests
-! (TBD) Next / previous doesn't break with single track
 - After activity and fragment finish loading, press back button. Should not crash.
 - Press back button while track is playing - track should stop playing
 - Press play - should start playing
@@ -34,6 +33,7 @@ stage 2 tracks tests
 - Track should be able to be shared
 - Press next or previous, then share - correct track should be shared
 - Play a track.  Go back to track list and select a different track.  Music should stop playing
+- Next / previous doesn't break with single track (search for ColdPlay Wu)
 
 additional - stage1
 ? Asynctask for fetching
