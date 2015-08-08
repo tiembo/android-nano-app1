@@ -2,7 +2,7 @@ fixes
 ! pressing back out of play view seems to cancel service?
 ! rotate/resume removes part of UI when playing- flip when empty startup fails on both tablet and phone
 - share intent shows for tablet layout
-. navigate back from sharing - werid state, pressing pause crashes
+. navigate back from sharing - play/pause button icon out of sync if track finished playing
 . search for known artist, then search for error artist (check if tablet only?)
 . play/pause button state kept when going to prev / next track
 . 00:00 shows when selecting different track while current one is playing
