@@ -209,6 +209,7 @@ public class PlayTrackActivityFragment extends DialogFragment
         Intent intent = new Intent(getActivity(), PlaybackService.class);
         intent.putExtra(TRACK_LIST_BUNDLE, mTrackListBundle);
         intent.putExtra(TRACK_SELECTED, mTrackSelected);
+        getActivity().startService(intent);
         getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 

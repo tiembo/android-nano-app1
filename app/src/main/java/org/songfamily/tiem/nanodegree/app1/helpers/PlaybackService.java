@@ -48,9 +48,26 @@ public class PlaybackService extends Service
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
         mTrackListBundle = intent.getBundleExtra(PlayTrackActivityFragment.TRACK_LIST_BUNDLE);
-        mTrackSelected = intent.getIntExtra(PlayTrackActivityFragment.TRACK_SELECTED, 0);
+        int trackDesired = intent.getIntExtra(PlayTrackActivityFragment.TRACK_SELECTED, 0);
+
+        // either starting new or changed track
+        if (mTrackSelected != trackDesired) {
+            mTrackSelected = trackDesired;
+            if (mMediaPlayer != null) {
+                if (mMediaPlayer.isPlaying()) {
+                    mMediaPlayer.stop();
+                }
+                onCompletion(mMediaPlayer);
+            }
+        }
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
         return mBinder;
     }
 

@@ -1,12 +1,12 @@
 fixes
 ! pressing back out of play view seems to cancel service?
-- flip when empty startup fails on both tablet and phone
+! rotate/resume removes part of UI when playing- flip when empty startup fails on both tablet and phone
 - share intent shows for tablet layout
 . navigate back from sharing - werid state, pressing pause crashes
 . search for known artist, then search for error artist (check if tablet only?)
 . play track extra share menu on rotate (phone only?)
-. rotate removes part of UI when playing
 . play/pause button state kept when going to prev / next track
+. 00:00 shows when selecting different track while current one is playing
 
 stage 2 exceeds
 - settings
@@ -18,12 +18,13 @@ stage 2 cleanups / tweaks
 - remove static album image size
 - handle null album image url
 - comments and test for StringHelper
-- fade music in and out
-- extract out artist name helper (instead of get(0) nonsense), or just pass as intent extra
-- bundle DRY in MainActivity and ArtistTracksActivity
-- DRY Fragment Callbacks
+. extract out artist name helper (instead of get(0) nonsense), or just pass as intent extra
+. bundle DRY in MainActivity and ArtistTracksActivity
+. DRY Fragment Callbacks
+. fade music in and out
 
 stage 2 tracks tests
+! (TBD) Next / previous doesn't break with single track
 - After activity and fragment finish loading, press back button. Should not crash.
 - Press back button while track is playing - track should stop playing
 - Press play - should start playing
@@ -33,7 +34,7 @@ stage 2 tracks tests
 - After track finishes playing, play button should show a play icon
 - Track should be able to be shared
 - Press next or previous, then share - correct track should be shared
-- (TBD) Next / previous doesn't break with single track
+- Play a track.  Go back to track list and select a different track.  Music should stop playing
 
 additional - stage1
 ? Asynctask for fetching
