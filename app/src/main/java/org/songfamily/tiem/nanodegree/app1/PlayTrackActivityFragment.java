@@ -262,6 +262,7 @@ public class PlayTrackActivityFragment extends DialogFragment
                         seekBar.setProgress(0);
                         seekBar.setEnabled(false);
                         tvElapsedTime.setText(getTime(0));
+                        ivPlayPause.setImageResource(android.R.drawable.ic_media_play);
                         break;
                     case (PlaybackService.ELAPSED_TIME):
                         int elapsedTime = intent.getIntExtra(PlaybackService.SERVICE_DATA, 0);
