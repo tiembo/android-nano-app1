@@ -1,6 +1,6 @@
 fixes
-! pressing back out of play view seems to cancel service?
-! rotate/resume removes part of UI when playing- flip when empty startup fails on both tablet and phone
+! auto play track
+! rotate/resume removes part of UI when playing - flip when empty startup fails on both tablet and phone
 - share intent shows for tablet layout
 . navigate back from sharing - play/pause button icon out of sync if track finished playing
 . search for known artist, then search for error artist (check if tablet only?)
@@ -24,7 +24,6 @@ stage 2 cleanups / tweaks
 
 stage 2 tracks tests
 - After activity and fragment finish loading, press back button. Should not crash.
-- Press back button while track is playing - track should stop playing
 - Press play - should start playing
 - Press pause while track is playing - should pause
 - Press play again after track is paused - should resume playing from previous location
@@ -32,7 +31,9 @@ stage 2 tracks tests
 - After track finishes playing, play button should show a play icon
 - Track should be able to be shared
 - Press next or previous, then share - correct track should be shared
-- Play a track.  Go back to track list and select a different track.  Music should stop playing
+- Play a track.  Go back to track list and...
+  - select a different track.  Music should stop playing
+  - select the same track.  Music should keep playing
 - Next / previous doesn't break with single track (search for ColdPlay Wu)
 
 additional - stage1
