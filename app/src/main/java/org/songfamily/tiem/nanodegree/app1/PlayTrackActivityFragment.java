@@ -224,6 +224,10 @@ public class PlayTrackActivityFragment extends DialogFragment
             PlaybackService.LocalBinder binder = (PlaybackService.LocalBinder) service;
             mService = binder.getService();
             mServiceBound = true;
+
+            if (mService.isMediaPlayerNull()) {
+                playButtonClicked();
+            }
         }
 
         @Override

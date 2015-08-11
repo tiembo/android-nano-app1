@@ -247,6 +247,8 @@ public class PlaybackService extends Service
         return mMediaPlayer.getDuration();
     }
 
+    public boolean isMediaPlayerNull() { return mMediaPlayer == null; }
+
     public void setProgress(int msec) {
         if (mMediaPlayer != null) {
             mMediaPlayer.seekTo(msec);
