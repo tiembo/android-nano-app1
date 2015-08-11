@@ -1,4 +1,8 @@
 fixes
+! after rotating play fragment
+  ! go to next track - text overlaps (phone only)
+  ! go to next track, then rotate again - loads original track
+- track image on notification
 - share intent shows for tablet layout
 - don't constantly update seek bar from service - just get time and have fragment handle runnable
 . navigate back from sharing - play/pause button icon out of sync if track finished playing
