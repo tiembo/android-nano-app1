@@ -291,7 +291,7 @@ public class PlayTrackActivityFragment extends DialogFragment
         String artistName = track.artists.get(0).name;
         String trackName = track.name;
 
-        tvAlbumName.setText(albumName);
+        tvAlbumName.setText("Placeholder album name");
         tvArtistName.setText(artistName);
         tvTrackName.setText(trackName);
         Picasso.with(getActivity())
