@@ -257,11 +257,8 @@ public class PlayTrackActivityFragment extends DialogFragment
                         progressBar.setVisibility(View.GONE);
                         updateSeekBar();
                         break;
-                    case (PlaybackService.TRACK_PLAYING):
-                        ivPlayPause.setImageResource(android.R.drawable.ic_media_pause);
-                        break;
-                    case (PlaybackService.TRACK_PAUSED):
-                        ivPlayPause.setImageResource(android.R.drawable.ic_media_play);
+                    case (PlaybackService.UPDATE_PLAY_PAUSE):
+                        updatePlayPauseButton();
                         break;
                     case (PlaybackService.TRACK_COMPLETED):
                         seekBar.setProgress(0);

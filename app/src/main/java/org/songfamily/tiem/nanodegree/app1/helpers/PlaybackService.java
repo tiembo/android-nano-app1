@@ -160,12 +160,12 @@ public class PlaybackService extends Service
 
     private void playTrack() {
         mMediaPlayer.start();
-        broadcastTrackPlaying();
+        broadcastUpdatePlayPause();
     }
 
     private void pauseTrack() {
         mMediaPlayer.pause();
-        broadcastTrackPaused();
+        broadcastUpdatePlayPause();
     }
 
     private Notification buildNotification(String trackName, String artistName) {
@@ -188,8 +188,7 @@ public class PlaybackService extends Service
     static final public String SERVICE_DATA = "PlaybackServiceData";
     static final public String TRACK_PREPARING = "TrackPreparing";
     static final public String TRACK_PREPARED = "TrackPrepared";
-    static final public String TRACK_PLAYING = "TrackPlaying";
-    static final public String TRACK_PAUSED = "TrackPaused";
+    static final public String UPDATE_PLAY_PAUSE = "UpdatePlayPause";
     static final public String TRACK_COMPLETED = "TrackCompleted";
     static final public String ELAPSED_TIME = "ElapsedTime";
 
@@ -201,12 +200,8 @@ public class PlaybackService extends Service
         broadcastIntent(getBroadcastIntent().putExtra(SERVICE_MESSAGE, TRACK_PREPARED));
     }
 
-    private void broadcastTrackPlaying() {
-        broadcastIntent(getBroadcastIntent().putExtra(SERVICE_MESSAGE, TRACK_PLAYING));
-    }
-
-    private void broadcastTrackPaused() {
-        broadcastIntent(getBroadcastIntent().putExtra(SERVICE_MESSAGE, TRACK_PAUSED));
+    private void broadcastUpdatePlayPause() {
+        broadcastIntent(getBroadcastIntent().putExtra(SERVICE_MESSAGE, UPDATE_PLAY_PAUSE));
     }
 
     private void broadcastTrackCompleted() {
