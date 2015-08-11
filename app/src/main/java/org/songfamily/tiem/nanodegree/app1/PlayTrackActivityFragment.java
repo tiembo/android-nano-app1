@@ -28,6 +28,7 @@ import org.songfamily.tiem.nanodegree.app1.helpers.BundleHelper;
 import org.songfamily.tiem.nanodegree.app1.helpers.ImageHelper;
 import org.songfamily.tiem.nanodegree.app1.helpers.PlaybackService;
 import org.songfamily.tiem.nanodegree.app1.helpers.StringHelper;
+import org.songfamily.tiem.nanodegree.app1.helpers.TrackState;
 
 import java.util.concurrent.TimeUnit;
 
@@ -227,6 +228,9 @@ public class PlayTrackActivityFragment extends DialogFragment
 
             if (mService.isMediaPlayerNull()) {
                 playButtonClicked();
+            } else {
+                updateSeekBar();
+                updatePlayPauseButton();
             }
         }
 
@@ -251,10 +255,7 @@ public class PlayTrackActivityFragment extends DialogFragment
                     case (PlaybackService.TRACK_PREPARED):
                         setViewsClickability(true);
                         progressBar.setVisibility(View.GONE);
-                        int trackLength = mService.getTrackLength();
-                        seekBar.setEnabled(true);
-                        seekBar.setMax(trackLength);
-                        tvTrackLength.setText(getTime(trackLength));
+                        updateSeekBar();
                         break;
                     case (PlaybackService.TRACK_PLAYING):
                         ivPlayPause.setImageResource(android.R.drawable.ic_media_pause);
@@ -299,6 +300,23 @@ public class PlayTrackActivityFragment extends DialogFragment
         Picasso.with(getActivity())
                 .load(albumImageUrl)
                 .into(ivAlbumImage);
+    }
+
+    private void updateSeekBar() {
+        int trackLength = mService.getTrackLength();
+        seekBar.setEnabled(true);
+        seekBar.setMax(trackLength);
+        tvTrackLength.setText(getTime(trackLength));
+    }
+
+    private void updatePlayPauseButton() {
+        TrackState trackState = mService.getTrackState();
+
+        if (trackState == TrackState.PLAYING) {
+            ivPlayPause.setImageResource(android.R.drawable.ic_media_pause);
+        } else if (trackState == TrackState.PAUSED) {
+            ivPlayPause.setImageResource(android.R.drawable.ic_media_play);
+        } // no-op otherwise
     }
 
     private Track getSelectedTrack() {

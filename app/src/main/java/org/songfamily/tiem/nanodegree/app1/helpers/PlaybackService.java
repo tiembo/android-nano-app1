@@ -247,6 +247,14 @@ public class PlaybackService extends Service
         return mMediaPlayer.getDuration();
     }
 
+    public TrackState getTrackState() {
+        if (mMediaPlayer == null) {
+            return null;
+        }
+
+        return mMediaPlayer.isPlaying() ? TrackState.PLAYING : TrackState.PAUSED;
+    }
+
     public boolean isMediaPlayerNull() { return mMediaPlayer == null; }
 
     public void setProgress(int msec) {
