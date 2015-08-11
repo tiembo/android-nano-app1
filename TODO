@@ -1,0 +1,59 @@
+fixes
+! after rotating play fragment
+  ! go to next track - text overlaps (phone only)
+  ! go to next track, then rotate again - loads original track
+- track image on notification
+- share intent shows for tablet layout
+- don't constantly update seek bar from service - just get time and have fragment handle runnable
+. navigate back from sharing - play/pause button icon out of sync if track finished playing
+. search for known artist, then search for error artist (check if tablet only?)
+. play/pause button state kept when going to prev / next track
+. 00:00 shows when selecting different track while current one is playing
+. landscape view on phone weird
+? need to sync album text and artwork when entering fragment from notification?
+
+stage 2 exceeds
+- settings
+  - country code
+  - ongoing
+
+stage 2 cleanups / tweaks
+- check TODOs!
+- remove static album image size
+- handle null album image url
+- comments and test for StringHelper
+. extract out artist name helper (instead of get(0) nonsense), or just pass as intent extra
+. bundle DRY in MainActivity and ArtistTracksActivity
+. DRY Fragment Callbacks
+. fade music in and out
+
+stage 2 tracks tests
+- After activity and fragment finish loading, press back button. Should not crash.
+- Press play - should start playing
+- Press pause while track is playing - should pause
+- Press play again after track is paused - should resume playing from previous location
+- After track finishes playing, pressing play should start track from beginning
+- After track finishes playing, play button should show a play icon
+- Track should be able to be shared
+- Press next or previous, then share - correct track should be shared
+- Play a track.  Go back to track list and...
+  - select a different track.  Music should stop playing
+  - select the same track.  Music should keep playing
+- Next / previous doesn't break with single track (search for ColdPlay Wu)
+
+additional - stage1
+? Asynctask for fetching
+? fix: listview margin vs padding - not sure if this is needed, check gmail
+- loading indicator
+- x on search bar to clear results
+- use 200px pic for list image
+- see if can DRY adapter / fragments (probably not list item / fragment layout).  rename if necessary
+- add tests for ImageHelper
+- adapterviewcompat?
+- recyclerview
+- cards
+- resume activity - check for null artist id
+- localized country code
+- general styling (along with lollipop style sheets and top theme)
+- consolidate blank activities?
+- weird error when turning airplane mode and then navigating to track list - Retrofit-Idle

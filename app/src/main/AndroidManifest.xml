@@ -4,11 +4,17 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- for track playback -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <service android:name=".helpers.PlaybackService"/>
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -26,6 +32,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.songfamily.tiem.nanodegree.app1.MainActivity" />
+        </activity>
+        <activity
+            android:name=".PlayTrackActivity"
+            android:label="@string/title_activity_play_track" >
         </activity>
     </application>
 

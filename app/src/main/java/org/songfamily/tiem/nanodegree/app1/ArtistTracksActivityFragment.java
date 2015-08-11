@@ -1,10 +1,12 @@
 package org.songfamily.tiem.nanodegree.app1;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ViewSwitcher;
 
@@ -23,7 +25,13 @@ import retrofit.client.Response;
 
 
 public class ArtistTracksActivityFragment extends BaseFragment
-    implements Callback<Tracks> {
+    implements Callback<Tracks>, ListView.OnItemClickListener {
+
+    /**
+     * The fragment's current callback object, which is notified of list item
+     * clicks.
+     */
+    private Callbacks mCallbacks = sDummyCallbacks;
 
     public static final String ARTIST_ID_EXTRA = "artistId";
     public static final String ARTIST_NAME_EXTRA = "artistName";
@@ -45,10 +53,11 @@ public class ArtistTracksActivityFragment extends BaseFragment
         mAdapter = new ArtistTracksAdapter(getActivity(), new ArrayList<Track>());
         ListView listView = (ListView) view.findViewById(R.id.lv_tracks);
         listView.setAdapter(mAdapter);
+        listView.setOnItemClickListener(this);
 
         // set action bar subtitle with artists's name
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        String artistName = activity.getIntent().getStringExtra(ARTIST_NAME_EXTRA);
+        String artistName = getArguments().getString(ARTIST_NAME_EXTRA);
         android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
         if (actionBar != null)
             actionBar.setSubtitle(artistName);
@@ -58,7 +67,7 @@ public class ArtistTracksActivityFragment extends BaseFragment
 
         // fetch track list from Spotify if needed; otherwise use Bundle data
         if (savedInstanceState == null) {
-            String artistId = activity.getIntent().getStringExtra(ARTIST_ID_EXTRA);
+            String artistId = getArguments().getString(ARTIST_ID_EXTRA);
             searchForTracks(artistId, COUNTRY_ID);
         } else {
             mTrackList = BundleHelper.getTrackList(savedInstanceState);
@@ -66,6 +75,26 @@ public class ArtistTracksActivityFragment extends BaseFragment
         }
 
         return view;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // Activities containing this fragment must implement its callbacks.
+        if (!(activity instanceof Callbacks)) {
+            throw new IllegalStateException("Activity must implement fragment's callbacks.");
+        }
+
+        mCallbacks = (Callbacks) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        // Reset the active callbacks interface to the dummy implementation.
+        mCallbacks = sDummyCallbacks;
     }
 
     @Override
@@ -118,4 +147,32 @@ public class ArtistTracksActivityFragment extends BaseFragment
             }
         });
     }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Bundle bundle = new Bundle();
+        BundleHelper.putTrackList(bundle, mTrackList);
+        mCallbacks.onItemSelected(bundle, i);
+    }
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callbacks {
+        /**
+         * Callback for when an item has been selected.
+         */
+        void onItemSelected(Bundle trackList, int selectedTrack);
+    }
+
+    /**
+     * A dummy implementation of the {@link Callbacks} interface that does
+     * nothing. Used only when this fragment is not attached to an activity.
+     */
+    private static Callbacks sDummyCallbacks = new Callbacks() {
+        @Override
+        public void onItemSelected(Bundle trackList, int selectedTrack) {}
+    };
 }
