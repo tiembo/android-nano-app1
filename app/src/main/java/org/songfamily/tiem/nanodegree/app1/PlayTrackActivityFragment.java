@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -75,9 +76,14 @@ public class PlayTrackActivityFragment extends DialogFragment
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_play_track, container, false);
 
-        // fetch track information from arguments
-        mTrackListBundle = getArguments().getBundle(TRACK_LIST_BUNDLE);
-        mTrackSelected = getArguments().getInt(TRACK_SELECTED);
+        // fetch track information from arguments or savedInstanceState
+        if (savedInstanceState == null) {
+            mTrackListBundle = getArguments().getBundle(TRACK_LIST_BUNDLE);
+            mTrackSelected = getArguments().getInt(TRACK_SELECTED);
+        } else {
+            mTrackListBundle = savedInstanceState.getBundle(TRACK_LIST_BUNDLE);
+            mTrackSelected = savedInstanceState.getInt(TRACK_SELECTED);
+        }
 
         tvAlbumName = (TextView) view.findViewById(R.id.pt_tv_album_name);
         tvArtistName = (TextView) view.findViewById(R.id.pt_tv_artist_name);
@@ -111,6 +117,14 @@ public class PlayTrackActivityFragment extends DialogFragment
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         return dialog;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBundle(TRACK_LIST_BUNDLE, mTrackListBundle);
+        outState.putInt(TRACK_SELECTED, mTrackSelected);
     }
 
     @Override
