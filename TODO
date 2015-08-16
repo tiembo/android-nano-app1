@@ -1,21 +1,15 @@
 fixes
-! after rotating play fragment
-  ! go to next track - text overlaps (phone only)
-  ! go to next track, then rotate again - loads original track
-- track image on notification
-- share intent shows for tablet layout
-- don't constantly update seek bar from service - just get time and have fragment handle runnable
-. navigate back from sharing - play/pause button icon out of sync if track finished playing
-. search for known artist, then search for error artist (check if tablet only?)
-. play/pause button state kept when going to prev / next track
-. 00:00 shows when selecting different track while current one is playing
-. landscape view on phone weird
-? need to sync album text and artwork when entering fragment from notification?
+- update track info on fragment when navigating via notification
+- update notification play/pause icon as appropriate
+- album art for notification
+? no-op when clicking on notification main area?
 
 stage 2 exceeds
+- "Now Playing" in action bar
 - settings
   - country code
   - ongoing
+- share intent shows for tablet layout
 
 stage 2 cleanups / tweaks
 - check TODOs!
@@ -26,6 +20,11 @@ stage 2 cleanups / tweaks
 . bundle DRY in MainActivity and ArtistTracksActivity
 . DRY Fragment Callbacks
 . fade music in and out
+. don't constantly update seek bar from service - just get time and have fragment handle runnable
+. navigate back from sharing - play/pause button icon out of sync if track finished playing
+. search for known artist, then search for error artist (check if tablet only?)
+. play/pause button state kept when going to prev / next track
+. 00:00 shows when selecting different track while current one is playing
 
 stage 2 tracks tests
 - After activity and fragment finish loading, press back button. Should not crash.

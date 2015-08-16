@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -27,6 +28,9 @@ public class PlaybackService extends Service
         MediaPlayer.OnErrorListener {
 
     public static final int SERVICE_ID = 8675309;
+    public static final String PLAY_PAUSE_INTENT = "PLAY_PAUSE_INTENT";
+    public static final String PREV_INTENT = "PREV_INTENT";
+    public static final String NEXT_INTENT = "NEXT_INTENT";
 
     private Bundle mTrackListBundle;
     private int mTrackSelected;
@@ -49,6 +53,25 @@ public class PlaybackService extends Service
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        int superCommand = super.onStartCommand(intent, flags, startId);
+
+        String action = intent.getAction();
+        if (action != null) {
+            switch (action) {
+                case PLAY_PAUSE_INTENT:
+                    onPlayPauseAction();
+                    break;
+                case NEXT_INTENT:
+                    onNextAction();
+                    break;
+                case PREV_INTENT:
+                    onPreviousAction();
+                    break;
+            }
+
+            return superCommand;
+        }
+
         mTrackListBundle = intent.getBundleExtra(PlayTrackActivityFragment.TRACK_LIST_BUNDLE);
         int trackDesired = intent.getIntExtra(PlayTrackActivityFragment.TRACK_SELECTED, 0);
 
@@ -63,7 +86,7 @@ public class PlaybackService extends Service
             }
         }
 
-        return super.onStartCommand(intent, flags, startId);
+        return superCommand;
     }
 
     @Override
@@ -169,16 +192,55 @@ public class PlaybackService extends Service
     }
 
     private Notification buildNotification(String trackName, String artistName) {
-        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
+        PendingIntent pi = PendingIntent.getActivity(
+                getApplicationContext(),
+                0,
                 new Intent(getApplicationContext(), MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        return new NotificationCompat.Builder(getApplicationContext())
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_library_music_black_48dp)
                 .setContentTitle(trackName)
                 .setContentText(artistName)
-                .setContentIntent(pi)
-                .build();
+                .setContentIntent(pi);
+
+        boolean showActionButtons = true;
+        if (showActionButtons) {
+            Intent prevIntent = new Intent(getApplicationContext(), PlaybackService.class);
+            prevIntent.setAction(PREV_INTENT);
+            PendingIntent prevPendingIntent = PendingIntent.getService(
+                    getApplicationContext(),
+                    1,
+                    prevIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Intent playPauseIntent = new Intent(getApplicationContext(), PlaybackService.class);
+            playPauseIntent.setAction(PLAY_PAUSE_INTENT);
+            PendingIntent playPausePendingIntent = PendingIntent.getService(
+                    getApplicationContext(),
+                    2,
+                    playPauseIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Intent nextIntent = new Intent(getApplicationContext(), PlaybackService.class);
+            nextIntent.setAction(NEXT_INTENT);
+            PendingIntent nextPendingIntent = PendingIntent.getService(
+                    getApplicationContext(),
+                    3,
+                    nextIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
+            builder.addAction(android.R.drawable.ic_media_previous, "Previous", prevPendingIntent)
+                    .addAction(android.R.drawable.ic_media_pause, "Pause", playPausePendingIntent)
+                    .addAction(android.R.drawable.ic_media_next, "Next", nextPendingIntent);
+        }
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+        }
+
+        return builder.build();
     }
 
     // *** begin broadcast methods ********************************************
