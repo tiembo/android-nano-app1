@@ -6,10 +6,7 @@ fixes
 
 stage 2 exceeds
 - "Now Playing" in action bar
-- settings
-  - country code
-  - ongoing
-- share intent shows for tablet layout
+- share intent shows for tablet layout - use share button
 
 stage 2 cleanups / tweaks
 - check TODOs!

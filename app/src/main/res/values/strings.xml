@@ -29,4 +29,17 @@
     <string name="pref_country_code_summary">Used for listing top artist tracks based on specificed country</string>
     <string name="pref_country_code">country_code</string>
     <string name="pref_country_code_default">US</string>
+
+    <!-- list of country names and codes -->
+    <string-array name="pref_country_code_entries">
+        <item>United States</item>
+        <item>Spain</item>
+        <item>Sweden</item>
+    </string-array>
+
+    <string-array name="pref_country_code_values">
+        <item>US</item>
+        <item>ES</item>
+        <item>SE</item>
+    </string-array>
 </resources>
