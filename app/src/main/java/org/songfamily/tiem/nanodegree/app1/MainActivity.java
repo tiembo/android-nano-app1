@@ -2,10 +2,10 @@ package org.songfamily.tiem.nanodegree.app1;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity
@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
         setContentView(R.layout.activity_main);
 
         if (findViewById(R.id.item_detail_container) != null) {
@@ -43,7 +44,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            Toast.makeText(this, "TBD: Settings", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, PrefActivity.class);
+            startActivity(intent);
             return true;
         }
 

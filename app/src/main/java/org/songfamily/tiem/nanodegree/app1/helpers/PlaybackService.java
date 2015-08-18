@@ -35,6 +35,7 @@ public class PlaybackService extends Service
     private Bundle mTrackListBundle;
     private int mTrackSelected;
     private MediaPlayer mMediaPlayer = null;
+    private boolean isPrepared = false;
     final Handler mHandler = new Handler();
 
     // Binder given to clients
@@ -96,7 +97,9 @@ public class PlaybackService extends Service
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
+        isPrepared = true;
         playTrack();
+        startForegroundWithNotification();
         broadcastTrackPrepared();
         startElapsedTimeRunnable();
     }
@@ -104,7 +107,7 @@ public class PlaybackService extends Service
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
         stopForeground(true);
-        mMediaPlayer = null;
+        resetMediaPlayer();
         mHandler.removeCallbacks(elapsedTimeRunnable);
         broadcastTrackCompleted();
     }
@@ -127,41 +130,44 @@ public class PlaybackService extends Service
             } else {
                 playTrack();
             }
+            startForegroundWithNotification();
         }
     }
 
     public void onNextAction() {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.stop();
-            mMediaPlayer = null;
-        }
-
-        mTrackSelected++;
-        if (mTrackSelected > BundleHelper.getTrackList(mTrackListBundle).size() - 1) {
-            mTrackSelected = 0;
-        }
-
-        prepareTrack();
+        onTrackChangeAction(true);
     }
 
     // TODO: go to beginning of track if x seconds of the track has already been played
     public void onPreviousAction() {
+        onTrackChangeAction(false);
+    }
+
+    private void onTrackChangeAction(boolean isNextTrack) {
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
-            mMediaPlayer = null;
+            resetMediaPlayer();
         }
 
-        mTrackSelected--;
-        if (mTrackSelected < 0) {
-            mTrackSelected = BundleHelper.getTrackList(mTrackListBundle).size() - 1;
+        if (isNextTrack) {
+            mTrackSelected++;
+            if (mTrackSelected > BundleHelper.getTrackList(mTrackListBundle).size() - 1) {
+                mTrackSelected = 0;
+            }
+        } else { // assuming previous
+            mTrackSelected--;
+            if (mTrackSelected < 0) {
+                mTrackSelected = BundleHelper.getTrackList(mTrackListBundle).size() - 1;
+            }
         }
 
+        broadcastTrackChanged();
         prepareTrack();
     }
 
     private void prepareTrack() {
         broadcastTrackPreparing();
-        Track track = BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
+        Track track = getTrack();
 
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -175,6 +181,15 @@ public class PlaybackService extends Service
             e.printStackTrace();
         }
 
+        startForegroundWithNotification();
+    }
+
+    private Track getTrack() {
+        return BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
+    }
+
+    private void startForegroundWithNotification() {
+        Track track = getTrack();
         String trackName = track.name;
         String artistName = track.artists.get(0).name;
         Notification notification = buildNotification(trackName, artistName);
@@ -191,6 +206,11 @@ public class PlaybackService extends Service
         broadcastUpdatePlayPause();
     }
 
+    private void resetMediaPlayer() {
+        mMediaPlayer = null;
+        isPrepared = false;
+    }
+
     private Notification buildNotification(String trackName, String artistName) {
         PendingIntent pi = PendingIntent.getActivity(
                 getApplicationContext(),
@@ -205,8 +225,8 @@ public class PlaybackService extends Service
                 .setContentText(artistName)
                 .setContentIntent(pi);
 
-        boolean showActionButtons = true;
-        if (showActionButtons) {
+        boolean showActionButtons = MySharedPrefs.getShowOngoingNotifications(getApplicationContext());
+        if (isPrepared && showActionButtons) {
             Intent prevIntent = new Intent(getApplicationContext(), PlaybackService.class);
             prevIntent.setAction(PREV_INTENT);
             PendingIntent prevPendingIntent = PendingIntent.getService(
@@ -231,9 +251,16 @@ public class PlaybackService extends Service
                     nextIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
-            builder.addAction(android.R.drawable.ic_media_previous, "Previous", prevPendingIntent)
-                    .addAction(android.R.drawable.ic_media_pause, "Pause", playPausePendingIntent)
-                    .addAction(android.R.drawable.ic_media_next, "Next", nextPendingIntent);
+            int playPauseIcon;
+            if (mMediaPlayer.isPlaying()) {
+                playPauseIcon = android.R.drawable.ic_media_pause;
+            } else {
+                playPauseIcon = android.R.drawable.ic_media_play;
+            }
+
+            builder.addAction(android.R.drawable.ic_media_previous, null, prevPendingIntent)
+                    .addAction(playPauseIcon, null, playPausePendingIntent)
+                    .addAction(android.R.drawable.ic_media_next, null, nextPendingIntent);
         }
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
@@ -250,6 +277,7 @@ public class PlaybackService extends Service
     static final public String SERVICE_DATA = "PlaybackServiceData";
     static final public String TRACK_PREPARING = "TrackPreparing";
     static final public String TRACK_PREPARED = "TrackPrepared";
+    static final public String TRACK_CHANGED = "TrackChanged";
     static final public String UPDATE_PLAY_PAUSE = "UpdatePlayPause";
     static final public String TRACK_COMPLETED = "TrackCompleted";
     static final public String ELAPSED_TIME = "ElapsedTime";
@@ -260,6 +288,10 @@ public class PlaybackService extends Service
 
     private void broadcastTrackPrepared() {
         broadcastIntent(getBroadcastIntent().putExtra(SERVICE_MESSAGE, TRACK_PREPARED));
+    }
+
+    private void broadcastTrackChanged() {
+        broadcastIntent(getBroadcastIntent().putExtra(SERVICE_MESSAGE, TRACK_CHANGED));
     }
 
     private void broadcastUpdatePlayPause() {

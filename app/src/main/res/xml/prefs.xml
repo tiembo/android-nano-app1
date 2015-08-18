@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="@string/pref_notifcation_controls"
+        android:title="@string/pref_notification_controls_title"
+        android:summary="@string/pref_notification_controls_summary"
+        android:defaultValue="@bool/pref_notifcation_controls_default"/>
+
+    <ListPreference
+        android:key="@string/pref_country_code"
+        android:title="@string/pref_country_code_title"
+        android:summary="@string/pref_country_code_summary"
+        android:defaultValue="@string/pref_country_code_default"
+        android:entries="@array/pref_country_code_entries"
+        android:entryValues="@array/pref_country_code_values"/>
+</PreferenceScreen>
