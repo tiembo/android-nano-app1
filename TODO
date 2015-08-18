@@ -1,5 +1,4 @@
 fixes
-- update track info on fragment when navigating via notification
 - album art for notification
 - show lock screen controls without having to scroll down
 ! no-op when clicking on notification main area?

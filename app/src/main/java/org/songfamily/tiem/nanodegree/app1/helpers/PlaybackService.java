@@ -35,6 +35,7 @@ public class PlaybackService extends Service
     private Bundle mTrackListBundle;
     private int mTrackSelected;
     private MediaPlayer mMediaPlayer = null;
+    private boolean isPrepared = false;
     final Handler mHandler = new Handler();
 
     // Binder given to clients
@@ -96,6 +97,7 @@ public class PlaybackService extends Service
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
+        isPrepared = true;
         playTrack();
         startForegroundWithNotification();
         broadcastTrackPrepared();
@@ -105,7 +107,7 @@ public class PlaybackService extends Service
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
         stopForeground(true);
-        mMediaPlayer = null;
+        resetMediaPlayer();
         mHandler.removeCallbacks(elapsedTimeRunnable);
         broadcastTrackCompleted();
     }
@@ -144,7 +146,7 @@ public class PlaybackService extends Service
     private void onTrackChangeAction(boolean isNextTrack) {
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
-            mMediaPlayer = null;
+            resetMediaPlayer();
         }
 
         if (isNextTrack) {
@@ -204,6 +206,11 @@ public class PlaybackService extends Service
         broadcastUpdatePlayPause();
     }
 
+    private void resetMediaPlayer() {
+        mMediaPlayer = null;
+        isPrepared = false;
+    }
+
     private Notification buildNotification(String trackName, String artistName) {
         PendingIntent pi = PendingIntent.getActivity(
                 getApplicationContext(),
@@ -219,7 +226,7 @@ public class PlaybackService extends Service
                 .setContentIntent(pi);
 
         boolean showActionButtons = MySharedPrefs.getShowOngoingNotifications(getApplicationContext());
-        if (showActionButtons) {
+        if (isPrepared && showActionButtons) {
             Intent prevIntent = new Intent(getApplicationContext(), PlaybackService.class);
             prevIntent.setAction(PREV_INTENT);
             PendingIntent prevPendingIntent = PendingIntent.getService(
