@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.ViewSwitcher;
 
 import org.songfamily.tiem.nanodegree.app1.helpers.BundleHelper;
+import org.songfamily.tiem.nanodegree.app1.helpers.MySharedPrefs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,7 +69,7 @@ public class ArtistTracksActivityFragment extends BaseFragment
         // fetch track list from Spotify if needed; otherwise use Bundle data
         if (savedInstanceState == null) {
             String artistId = getArguments().getString(ARTIST_ID_EXTRA);
-            searchForTracks(artistId, COUNTRY_ID);
+            searchForTracks(artistId, MySharedPrefs.getCountryCode(getActivity()));
         } else {
             mTrackList = BundleHelper.getTrackList(savedInstanceState);
             populateAdapter();
