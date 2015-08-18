@@ -2,7 +2,8 @@ fixes
 - update track info on fragment when navigating via notification
 - update notification play/pause icon as appropriate
 - album art for notification
-? no-op when clicking on notification main area?
+- show lock screen controls without having to scroll down
+! no-op when clicking on notification main area?
 
 stage 2 exceeds
 - "Now Playing" in action bar

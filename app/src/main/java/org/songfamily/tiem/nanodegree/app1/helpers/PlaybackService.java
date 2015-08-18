@@ -231,9 +231,9 @@ public class PlaybackService extends Service
                     nextIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
-            builder.addAction(android.R.drawable.ic_media_previous, "Previous", prevPendingIntent)
-                    .addAction(android.R.drawable.ic_media_pause, "Pause", playPausePendingIntent)
-                    .addAction(android.R.drawable.ic_media_next, "Next", nextPendingIntent);
+            builder.addAction(android.R.drawable.ic_media_previous, null, prevPendingIntent)
+                    .addAction(android.R.drawable.ic_media_pause, null, playPausePendingIntent)
+                    .addAction(android.R.drawable.ic_media_next, null, nextPendingIntent);
         }
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
