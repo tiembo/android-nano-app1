@@ -133,31 +133,33 @@ public class PlaybackService extends Service
     }
 
     public void onNextAction() {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.stop();
-            mMediaPlayer = null;
-        }
-
-        mTrackSelected++;
-        if (mTrackSelected > BundleHelper.getTrackList(mTrackListBundle).size() - 1) {
-            mTrackSelected = 0;
-        }
-
-        prepareTrack();
+        onTrackChangeAction(true);
     }
 
     // TODO: go to beginning of track if x seconds of the track has already been played
     public void onPreviousAction() {
+        onTrackChangeAction(false);
+    }
+
+    private void onTrackChangeAction(boolean isNextTrack) {
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             mMediaPlayer = null;
         }
 
-        mTrackSelected--;
-        if (mTrackSelected < 0) {
-            mTrackSelected = BundleHelper.getTrackList(mTrackListBundle).size() - 1;
+        if (isNextTrack) {
+            mTrackSelected++;
+            if (mTrackSelected > BundleHelper.getTrackList(mTrackListBundle).size() - 1) {
+                mTrackSelected = 0;
+            }
+        } else { // assuming previous
+            mTrackSelected--;
+            if (mTrackSelected < 0) {
+                mTrackSelected = BundleHelper.getTrackList(mTrackListBundle).size() - 1;
+            }
         }
 
+        broadcastTrackChanged();
         prepareTrack();
     }
 
@@ -268,6 +270,7 @@ public class PlaybackService extends Service
     static final public String SERVICE_DATA = "PlaybackServiceData";
     static final public String TRACK_PREPARING = "TrackPreparing";
     static final public String TRACK_PREPARED = "TrackPrepared";
+    static final public String TRACK_CHANGED = "TrackChanged";
     static final public String UPDATE_PLAY_PAUSE = "UpdatePlayPause";
     static final public String TRACK_COMPLETED = "TrackCompleted";
     static final public String ELAPSED_TIME = "ElapsedTime";
@@ -278,6 +281,10 @@ public class PlaybackService extends Service
 
     private void broadcastTrackPrepared() {
         broadcastIntent(getBroadcastIntent().putExtra(SERVICE_MESSAGE, TRACK_PREPARED));
+    }
+
+    private void broadcastTrackChanged() {
+        broadcastIntent(getBroadcastIntent().putExtra(SERVICE_MESSAGE, TRACK_CHANGED));
     }
 
     private void broadcastUpdatePlayPause() {

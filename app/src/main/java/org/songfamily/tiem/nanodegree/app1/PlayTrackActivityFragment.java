@@ -209,14 +209,10 @@ public class PlayTrackActivityFragment extends DialogFragment
 
     private void nextButtonClicked() {
         mService.onNextAction();
-        mTrackSelected = mService.getmTrackSelected();
-        updateViewsWithTrackInfo();
     }
 
     private void previousButtonClicked() {
         mService.onPreviousAction();
-        mTrackSelected = mService.getmTrackSelected();
-        updateViewsWithTrackInfo();
     }
     // *** end playback helper methods ****************************************
 
@@ -270,6 +266,10 @@ public class PlayTrackActivityFragment extends DialogFragment
                         setViewsClickability(true);
                         progressBar.setVisibility(View.GONE);
                         updateSeekBar();
+                        break;
+                    case (PlaybackService.TRACK_CHANGED):
+                        mTrackSelected = mService.getmTrackSelected();
+                        updateViewsWithTrackInfo();
                         break;
                     case (PlaybackService.UPDATE_PLAY_PAUSE):
                         updatePlayPauseButton();
