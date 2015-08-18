@@ -97,6 +97,7 @@ public class PlaybackService extends Service
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
         playTrack();
+        startForegroundWithNotification();
         broadcastTrackPrepared();
         startElapsedTimeRunnable();
     }
@@ -127,6 +128,7 @@ public class PlaybackService extends Service
             } else {
                 playTrack();
             }
+            startForegroundWithNotification();
         }
     }
 
@@ -161,7 +163,7 @@ public class PlaybackService extends Service
 
     private void prepareTrack() {
         broadcastTrackPreparing();
-        Track track = BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
+        Track track = getTrack();
 
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -175,6 +177,15 @@ public class PlaybackService extends Service
             e.printStackTrace();
         }
 
+        startForegroundWithNotification();
+    }
+
+    private Track getTrack() {
+        return BundleHelper.getTrackList(mTrackListBundle).get(mTrackSelected);
+    }
+
+    private void startForegroundWithNotification() {
+        Track track = getTrack();
         String trackName = track.name;
         String artistName = track.artists.get(0).name;
         Notification notification = buildNotification(trackName, artistName);
@@ -231,8 +242,15 @@ public class PlaybackService extends Service
                     nextIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
+            int playPauseIcon;
+            if (mMediaPlayer.isPlaying()) {
+                playPauseIcon = android.R.drawable.ic_media_pause;
+            } else {
+                playPauseIcon = android.R.drawable.ic_media_play;
+            }
+
             builder.addAction(android.R.drawable.ic_media_previous, null, prevPendingIntent)
-                    .addAction(android.R.drawable.ic_media_pause, null, playPausePendingIntent)
+                    .addAction(playPauseIcon, null, playPausePendingIntent)
                     .addAction(android.R.drawable.ic_media_next, null, nextPendingIntent);
         }
 
