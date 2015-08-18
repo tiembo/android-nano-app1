@@ -37,6 +37,10 @@
             android:name=".PlayTrackActivity"
             android:label="@string/title_activity_play_track" >
         </activity>
+        <activity
+            android:name=".PrefActivity"
+            android:label="@string/settings">
+        </activity>
     </application>
 
 </manifest>

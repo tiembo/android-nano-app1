@@ -205,7 +205,7 @@ public class PlaybackService extends Service
                 .setContentText(artistName)
                 .setContentIntent(pi);
 
-        boolean showActionButtons = true;
+        boolean showActionButtons = MySharedPrefs.getShowOngoingNotifications(getApplicationContext());
         if (showActionButtons) {
             Intent prevIntent = new Intent(getApplicationContext(), PlaybackService.class);
             prevIntent.setAction(PREV_INTENT);
