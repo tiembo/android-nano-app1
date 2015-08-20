@@ -7,16 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.songfamily.tiem.nanodegree.app1.helpers.GlobalData;
+
 
 public class MainActivity extends AppCompatActivity
     implements MainActivityFragment.Callbacks,
         ArtistTracksActivityFragment.Callbacks {
-
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
-    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +25,7 @@ public class MainActivity extends AppCompatActivity
             // large-screen layouts (res/values-large and
             // res/values-sw600dp). If this view is present, then the
             // activity should be in two-pane mode.
-            mTwoPane = true;
+            GlobalData.getInstance().isTablet = true;
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
@@ -64,7 +60,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onItemSelected(String artistId, String artistName) {
-        if (mTwoPane) {
+        if (GlobalData.getInstance().isTablet) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.

@@ -6,7 +6,8 @@
     <string name="no_search_results">No artists found. Please refine your search.</string>
     <string name="no_tracks">No tracks available for artist.</string>
     <string name="network_error">Error connecting to Spotify. Please try again.</string>
-    <string name="share_window_title">Share track via</string>
+    <string name="share_track">Share track</string>
+    <string name="share_track_via">Share track via</string>
 
     <!-- play track activity -->
     <string name="title_activity_play_track">Play Track</string>

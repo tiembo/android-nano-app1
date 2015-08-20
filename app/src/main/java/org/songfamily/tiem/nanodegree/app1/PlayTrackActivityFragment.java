@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import org.songfamily.tiem.nanodegree.app1.helpers.BundleHelper;
+import org.songfamily.tiem.nanodegree.app1.helpers.GlobalData;
 import org.songfamily.tiem.nanodegree.app1.helpers.ImageHelper;
 import org.songfamily.tiem.nanodegree.app1.helpers.PlaybackService;
 import org.songfamily.tiem.nanodegree.app1.helpers.StringHelper;
@@ -105,6 +106,12 @@ public class PlayTrackActivityFragment extends DialogFragment
         seekBar.setEnabled(false);
         seekBar.setOnSeekBarChangeListener(this);
 
+        if (GlobalData.getInstance().isTablet) {
+            View shareView = view.findViewById(R.id.pt_iv_share_track);
+            shareView.setVisibility(View.VISIBLE);
+            shareView.setOnClickListener(this);
+        }
+
         return view;
     }
 
@@ -149,23 +156,30 @@ public class PlayTrackActivityFragment extends DialogFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear(); // to prevent duplicates on device rotation
-        inflater.inflate(R.menu.menu_share, menu);
+
+        if (!GlobalData.getInstance().isTablet) {
+            menu.clear(); // to prevent duplicates on device rotation
+            inflater.inflate(R.menu.menu_share, menu);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_share) {
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, StringHelper.getShareText(getSelectedTrack()));
-            shareIntent.setType("text/plain");
-            startActivity(Intent.createChooser(shareIntent, getActivity().getString(R.string.share_window_title)));
+            shareTrackIntent();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void shareTrackIntent() {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, StringHelper.getShareText(getSelectedTrack()));
+        shareIntent.setType("text/plain");
+        startActivity(Intent.createChooser(shareIntent, getActivity().getString(R.string.share_track_via)));
     }
 
     @Override
@@ -184,6 +198,9 @@ public class PlayTrackActivityFragment extends DialogFragment
                 break;
             case R.id.pt_iv_previous_track:
                 previousButtonClicked();
+                break;
+            case R.id.pt_iv_share_track:
+                shareTrackIntent();
                 break;
         }
     }
