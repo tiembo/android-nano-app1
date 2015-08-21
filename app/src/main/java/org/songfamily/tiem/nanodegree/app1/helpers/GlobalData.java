@@ -4,6 +4,7 @@ package org.songfamily.tiem.nanodegree.app1.helpers;
 public class GlobalData {
     private static GlobalData instance = null;
     public boolean isTablet = false;
+    public boolean isPlaybackActive = false;
 
     private GlobalData() {
         // no-op

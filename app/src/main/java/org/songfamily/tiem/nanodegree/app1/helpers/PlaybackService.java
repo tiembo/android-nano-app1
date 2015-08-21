@@ -35,7 +35,6 @@ public class PlaybackService extends Service
     private Bundle mTrackListBundle;
     private int mTrackSelected;
     private MediaPlayer mMediaPlayer = null;
-    private boolean isPrepared = false;
     final Handler mHandler = new Handler();
 
     // Binder given to clients
@@ -97,7 +96,7 @@ public class PlaybackService extends Service
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
-        isPrepared = true;
+        GlobalData.getInstance().isPlaybackActive = true;
         playTrack();
         startForegroundWithNotification();
         broadcastTrackPrepared();
@@ -208,7 +207,7 @@ public class PlaybackService extends Service
 
     private void resetMediaPlayer() {
         mMediaPlayer = null;
-        isPrepared = false;
+        GlobalData.getInstance().isPlaybackActive = false;
     }
 
     private Notification buildNotification(String trackName, String artistName) {
@@ -226,7 +225,7 @@ public class PlaybackService extends Service
                 .setContentIntent(pi);
 
         boolean showActionButtons = MySharedPrefs.getShowOngoingNotifications(getApplicationContext());
-        if (isPrepared && showActionButtons) {
+        if (GlobalData.getInstance().isPlaybackActive && showActionButtons) {
             Intent prevIntent = new Intent(getApplicationContext(), PlaybackService.class);
             prevIntent.setAction(PREV_INTENT);
             PendingIntent prevPendingIntent = PendingIntent.getService(
