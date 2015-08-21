@@ -2,11 +2,8 @@ package org.songfamily.tiem.nanodegree.app1;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
-
-public class ArtistTracksActivity extends AppCompatActivity
-    implements ArtistTracksActivityFragment.Callbacks {
+public class ArtistTracksActivity extends MenuActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
