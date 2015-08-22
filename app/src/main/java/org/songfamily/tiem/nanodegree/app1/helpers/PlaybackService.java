@@ -109,6 +109,11 @@ public class PlaybackService extends Service
     }
 
     @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        stopSelf();
+    }
+
+    @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
         GlobalData.getInstance().isPlaybackActive = true;
         playTrack();
