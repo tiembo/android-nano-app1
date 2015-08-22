@@ -14,7 +14,6 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
-import org.songfamily.tiem.nanodegree.app1.MainActivity;
 import org.songfamily.tiem.nanodegree.app1.PlayTrackActivityFragment;
 import org.songfamily.tiem.nanodegree.app1.R;
 
@@ -214,7 +213,7 @@ public class PlaybackService extends Service
         PendingIntent pi = PendingIntent.getActivity(
                 getApplicationContext(),
                 0,
-                new Intent(getApplicationContext(), MainActivity.class),
+                new Intent(),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())

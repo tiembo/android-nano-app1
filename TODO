@@ -1,7 +1,6 @@
 fixes
 - album art for notification
 - show lock screen controls without having to scroll down
-! no-op when clicking on notification main area?
 
 stage 2 cleanups / tweaks
 - check TODOs!
@@ -17,6 +16,7 @@ stage 2 cleanups / tweaks
 . search for known artist, then search for error artist (check if tablet only?)
 . play/pause button state kept when going to prev / next track
 . 00:00 shows when selecting different track while current one is playing
+? navigate to play fragment when clicking on notificaiton? (currently no-op)
 
 stage 2 tracks tests
 - After activity and fragment finish loading, press back button. Should not crash.
