@@ -6,12 +6,12 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.session.MediaSession;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.songfamily.tiem.nanodegree.app1.PlayTrackActivityFragment;
@@ -30,6 +30,7 @@ public class PlaybackService extends Service
     public static final String PLAY_PAUSE_INTENT = "PLAY_PAUSE_INTENT";
     public static final String PREV_INTENT = "PREV_INTENT";
     public static final String NEXT_INTENT = "NEXT_INTENT";
+    private static final String MEDIA_SESSION_TAG = "MyMediaSessionTag";
 
     private Bundle mTrackListBundle;
     private int mTrackSelected;
@@ -210,13 +211,15 @@ public class PlaybackService extends Service
     }
 
     private Notification buildNotification(String trackName, String artistName) {
+        int[] actionsToShow = new int[] {};
+
         PendingIntent pi = PendingIntent.getActivity(
                 getApplicationContext(),
                 0,
                 new Intent(),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
+        Notification.Builder builder = new Notification.Builder(getApplicationContext())
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_library_music_black_48dp)
                 .setContentTitle(trackName)
@@ -259,10 +262,16 @@ public class PlaybackService extends Service
             builder.addAction(android.R.drawable.ic_media_previous, null, prevPendingIntent)
                     .addAction(playPauseIcon, null, playPausePendingIntent)
                     .addAction(android.R.drawable.ic_media_next, null, nextPendingIntent);
+
+            actionsToShow = new int[] {0,1,2};
         }
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+            MediaSession m = new MediaSession(getApplicationContext(), MEDIA_SESSION_TAG);
+            builder.setStyle(new Notification.MediaStyle()
+                    .setShowActionsInCompactView(actionsToShow)
+                    .setMediaSession(m.getSessionToken()));
         }
 
         return builder.build();
