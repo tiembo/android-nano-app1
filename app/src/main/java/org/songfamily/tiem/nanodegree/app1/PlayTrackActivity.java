@@ -23,6 +23,12 @@ public class PlayTrackActivity extends AppCompatActivity {
             Bundle newBundle = new Bundle();
             newBundle.putBundle(PlayTrackActivityFragment.TRACK_LIST_BUNDLE, trackList);
             newBundle.putInt(PlayTrackActivityFragment.TRACK_SELECTED, selectedTrack);
+
+            String action = getIntent().getAction();
+            if (action != null && action.equals(MenuActivity.RESUME_PLAYBACK_CONTROL)) {
+                newBundle.putBoolean(PlayTrackActivityFragment.RESUME_CONTROL, true);
+            }
+
             fragment.setArguments(newBundle);
 
             FragmentTransaction transaction = fragmentManager.beginTransaction();

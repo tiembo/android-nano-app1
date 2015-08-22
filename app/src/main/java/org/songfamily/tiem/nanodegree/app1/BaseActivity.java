@@ -1,0 +1,100 @@
+package org.songfamily.tiem.nanodegree.app1;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import org.songfamily.tiem.nanodegree.app1.helpers.GlobalData;
+import org.songfamily.tiem.nanodegree.app1.helpers.PlaybackService;
+
+abstract class MenuActivity extends AppCompatActivity
+    implements ArtistTracksActivityFragment.Callbacks {
+
+    public static final String RESUME_PLAYBACK_CONTROL = "RESUME_PLAYBACK_CONTROL";
+    protected BroadcastReceiver mBroadcastReceiver;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        invalidateOptionsMenu();
+        mBroadcastReceiver = initBroadcastReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver,
+                new IntentFilter(PlaybackService.SERVICE_FILTER));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_settings:
+                Intent intent = new Intent(this, PrefActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_currently_playing:
+                goToCurrentlyPlaying();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (!GlobalData.getInstance().isPlaybackActive) {
+            MenuItem navigateToPlayTrack = menu.getItem(0);
+            navigateToPlayTrack.setEnabled(false);
+            navigateToPlayTrack.setVisible(false);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    private BroadcastReceiver initBroadcastReceiver() {
+        return new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String message = intent.getStringExtra(PlaybackService.SERVICE_MESSAGE);
+
+                switch (message) {
+                    case PlaybackService.TRACK_PREPARED:
+                    case PlaybackService.TRACK_COMPLETED:
+                        invalidateOptionsMenu();
+                        break;
+                }
+            }
+        };
+    }
+
+    private void goToCurrentlyPlaying() {
+        if (GlobalData.getInstance().isTablet) {
+            PlayTrackActivityFragment fragment = new PlayTrackActivityFragment();
+            Bundle newBundle = new Bundle();
+            newBundle.putBoolean(PlayTrackActivityFragment.RESUME_CONTROL, true);
+            fragment.setArguments(newBundle);
+            fragment.show(getFragmentManager(), PlayTrackActivityFragment.TAG);
+        } else {
+            Intent intent = new Intent(this, PlayTrackActivity.class);
+            intent.setAction(RESUME_PLAYBACK_CONTROL);
+            startActivity(intent);
+        }
+    }
+}

@@ -5,9 +5,15 @@
     tools:context="org.songfamily.tiem.nanodegree.app1.BaseActivity">
 
     <item
+        android:id="@+id/action_currently_playing"
+        android:title="@string/action_currently_playing"
+        android:icon="@android:drawable/ic_media_play"
+        app:showAsAction="always"/>
+
+    <item
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:icon="@android:drawable/ic_menu_preferences"
         android:orderInCategory="100"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 </menu>

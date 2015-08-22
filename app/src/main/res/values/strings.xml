@@ -19,6 +19,7 @@
     <!-- menus -->
     <string name="action_settings">Settings</string>
     <string name="action_share">Share</string>
+    <string name="action_currently_playing">Currently Playing</string>
 
     <!-- preferences -->
     <string name="settings">Settings</string>
