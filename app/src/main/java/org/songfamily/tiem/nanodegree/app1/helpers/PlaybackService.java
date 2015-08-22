@@ -116,7 +116,7 @@ public class PlaybackService extends Service
         return false;
     }
 
-    public int getmTrackSelected() {
+    public int getTrackSelected() {
         return mTrackSelected;
     }
 

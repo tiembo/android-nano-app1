@@ -43,6 +43,7 @@ public class PlayTrackActivityFragment extends DialogFragment
     public static final String TRACK_LIST_BUNDLE = "trackListBundle";
     public static final String TRACK_SELECTED = "trackSelect";
     public static final String TAG = "PlayTrackActivityFragment";
+    public static final String RESUME_CONTROL = "resumeControl";
 
     private PlaybackService mService;
     private boolean mServiceBound = false;
@@ -78,12 +79,25 @@ public class PlayTrackActivityFragment extends DialogFragment
         View view = inflater.inflate(R.layout.fragment_play_track, container, false);
 
         // fetch track information from arguments or savedInstanceState
+        boolean resumeControl = getArguments().getBoolean(RESUME_CONTROL);
         if (savedInstanceState == null) {
-            mTrackListBundle = getArguments().getBundle(TRACK_LIST_BUNDLE);
-            mTrackSelected = getArguments().getInt(TRACK_SELECTED);
+            if (!resumeControl) {
+                mTrackListBundle = getArguments().getBundle(TRACK_LIST_BUNDLE);
+                mTrackSelected = getArguments().getInt(TRACK_SELECTED);
+            }
         } else {
             mTrackListBundle = savedInstanceState.getBundle(TRACK_LIST_BUNDLE);
             mTrackSelected = savedInstanceState.getInt(TRACK_SELECTED);
+        }
+
+        if (resumeControl) {
+            GlobalData globalData = GlobalData.getInstance();
+            mTrackListBundle = globalData.currentTrackList;
+            mTrackSelected = globalData.currentSelectedTrack;
+        } else {
+            GlobalData globalData = GlobalData.getInstance();
+            globalData.currentTrackList = mTrackListBundle;
+            globalData.currentSelectedTrack = mTrackSelected;
         }
 
         tvAlbumName = (TextView) view.findViewById(R.id.pt_tv_album_name);
@@ -285,7 +299,7 @@ public class PlayTrackActivityFragment extends DialogFragment
                         updateSeekBar();
                         break;
                     case (PlaybackService.TRACK_CHANGED):
-                        mTrackSelected = mService.getmTrackSelected();
+                        mTrackSelected = mService.getTrackSelected();
                         updateViewsWithTrackInfo();
                         break;
                     case (PlaybackService.UPDATE_PLAY_PAUSE):

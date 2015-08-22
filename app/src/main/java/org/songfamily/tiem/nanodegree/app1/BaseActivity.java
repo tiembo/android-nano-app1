@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import org.songfamily.tiem.nanodegree.app1.helpers.PlaybackService;
 abstract class MenuActivity extends AppCompatActivity
     implements ArtistTracksActivityFragment.Callbacks {
 
+    public static final String RESUME_PLAYBACK_CONTROL = "RESUME_PLAYBACK_CONTROL";
     protected BroadcastReceiver mBroadcastReceiver;
 
     @Override
@@ -42,7 +44,7 @@ abstract class MenuActivity extends AppCompatActivity
                 startActivity(intent);
                 return true;
             case R.id.action_currently_playing:
-                // TODO: implement this
+                goToCurrentlyPlaying();
                 return true;
         }
 
@@ -82,4 +84,17 @@ abstract class MenuActivity extends AppCompatActivity
         };
     }
 
+    private void goToCurrentlyPlaying() {
+        if (GlobalData.getInstance().isTablet) {
+            PlayTrackActivityFragment fragment = new PlayTrackActivityFragment();
+            Bundle newBundle = new Bundle();
+            newBundle.putBoolean(PlayTrackActivityFragment.RESUME_CONTROL, true);
+            fragment.setArguments(newBundle);
+            fragment.show(getFragmentManager(), PlayTrackActivityFragment.TAG);
+        } else {
+            Intent intent = new Intent(this, PlayTrackActivity.class);
+            intent.setAction(RESUME_PLAYBACK_CONTROL);
+            startActivity(intent);
+        }
+    }
 }
