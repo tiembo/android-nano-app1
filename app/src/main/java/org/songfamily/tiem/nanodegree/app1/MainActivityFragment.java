@@ -80,7 +80,10 @@ public class MainActivityFragment extends BaseFragment
         // use artist data from Bundle, if available
         if (savedInstanceState != null) {
             mArtlistList = BundleHelper.getArtistList(savedInstanceState);
-            populateAdapter();
+
+            if (mArtlistList != null) {
+                populateAdapter();
+            }
         }
 
         return view;

@@ -49,6 +49,10 @@ public class BundleHelper {
 
         List<Artist> artistList = new ArrayList<>();
 
+        if (artistNames == null || artistImageUrls == null || artistIds == null) {
+            return null;
+        }
+
         for (int i = 0; i < artistNames.length; i++) {
             Artist a = new Artist();
             a.images = createImageList(artistImageUrls[i]);
