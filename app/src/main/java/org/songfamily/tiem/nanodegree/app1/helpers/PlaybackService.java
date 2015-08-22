@@ -4,6 +4,8 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.session.MediaSession;
@@ -13,6 +15,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.songfamily.tiem.nanodegree.app1.PlayTrackActivityFragment;
 import org.songfamily.tiem.nanodegree.app1.R;
@@ -35,6 +40,7 @@ public class PlaybackService extends Service
     private Bundle mTrackListBundle;
     private int mTrackSelected;
     private MediaPlayer mMediaPlayer = null;
+    private Target mTarget = null;
     final Handler mHandler = new Handler();
 
     // Binder given to clients
@@ -92,6 +98,14 @@ public class PlaybackService extends Service
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mTarget != null) {
+            Picasso.with(getApplicationContext()).cancelRequest(mTarget);
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -189,10 +203,29 @@ public class PlaybackService extends Service
 
     private void startForegroundWithNotification() {
         Track track = getTrack();
-        String trackName = track.name;
-        String artistName = track.artists.get(0).name;
-        Notification notification = buildNotification(trackName, artistName);
-        startForeground(SERVICE_ID, notification);
+        final String trackName = track.name;
+        final String artistName = track.artists.get(0).name;
+
+        mTarget = new Target() {
+
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                Notification notification = buildNotification(trackName, artistName, bitmap);
+                startForeground(SERVICE_ID, notification);
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {}
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                Notification notification = buildNotification(trackName, artistName, null);
+                startForeground(SERVICE_ID, notification);
+            }
+        };
+
+        String imageUrl = ImageHelper.getImageUrl(track.album.images);
+        Picasso.with(getApplicationContext()).load(imageUrl).into(mTarget);
     }
 
     private void playTrack() {
@@ -207,10 +240,11 @@ public class PlaybackService extends Service
 
     private void resetMediaPlayer() {
         mMediaPlayer = null;
+        mTarget = null;
         GlobalData.getInstance().isPlaybackActive = false;
     }
 
-    private Notification buildNotification(String trackName, String artistName) {
+    private Notification buildNotification(String trackName, String artistName, Bitmap bitmap) {
         int[] actionsToShow = new int[] {};
 
         PendingIntent pi = PendingIntent.getActivity(
@@ -272,6 +306,10 @@ public class PlaybackService extends Service
             builder.setStyle(new Notification.MediaStyle()
                     .setShowActionsInCompactView(actionsToShow)
                     .setMediaSession(m.getSessionToken()));
+        }
+
+        if (bitmap != null) {
+            builder.setLargeIcon(bitmap);
         }
 
         return builder.build();
