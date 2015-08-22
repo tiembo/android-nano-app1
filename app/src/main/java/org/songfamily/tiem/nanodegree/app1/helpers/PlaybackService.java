@@ -174,6 +174,7 @@ public class PlaybackService extends Service
             }
         }
 
+        GlobalData.getInstance().currentSelectedTrack = mTrackSelected;
         broadcastTrackChanged();
         prepareTrack();
     }
