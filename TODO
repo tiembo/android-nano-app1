@@ -3,9 +3,6 @@ fixes
 - show lock screen controls without having to scroll down
 ! no-op when clicking on notification main area?
 
-stage 2 exceeds
-- "Now Playing" in action bar
-
 stage 2 cleanups / tweaks
 - check TODOs!
 - remove static album image size
